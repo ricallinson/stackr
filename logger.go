@@ -31,13 +31,13 @@ func loggerFormatDev(opt LogOpt, req *Request, res *Response) (string) {
     status := res.StatusCode
 
     // Get the length of the data sent.
-    length, _ := strconv.Atoi(res.Writer.Header().Get("Content-Length"))
+    length, _ := strconv.Atoi(res.Writer.Header().Get("content-length"))
 
     // The length as a string.
     strLen := ""
 
     if length > 0 {
-        strLen = " - " + fmt.Sprint(strLen);
+        strLen = " - " + fmt.Sprint(length);
     }
 
     // Set the default color for the log.

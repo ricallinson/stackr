@@ -21,6 +21,19 @@ func CreateResponse(writer http.ResponseWriter) (*Response) {
 }
 
 /*
+    Set map of headers
+*/
+
+func (this *Response) SetHeaders(headers map[string]string) (bool) {
+    for key, value := range headers {
+        if this.SetHeader(key, value) == false {
+            return false
+        }
+    }
+    return true
+}
+
+/*
     Set a header.
 */
 
@@ -43,6 +56,21 @@ func (this *Response) SetHeader(key string, value string) (bool) {
 func (this *Response) writeHeaders() {
     this.HeaderSent = true
     this.Writer.WriteHeader(this.StatusCode);
+}
+
+/*
+    Write bytes to the client.
+*/
+
+func (this *Response) WriteBytes(data []byte) (bool) {
+    if this.HeaderSent == false {
+        this.writeHeaders()
+    }
+    writen, err := this.Writer.Write(data)
+    if err != nil {
+        return false
+    }
+    return writen == len(data)
 }
 
 /*
