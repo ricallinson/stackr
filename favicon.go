@@ -4,6 +4,8 @@ import(
     // "fmt"
 )
 
+type FavOpt struct {}
+
 func faviconHandler(req *Request, res *Response, next func()) {
     
     if req.Url == "/favicon.ico" {
@@ -11,6 +13,6 @@ func faviconHandler(req *Request, res *Response, next func()) {
     }
 }
 
-func Favicon() (func(req *Request, res *Response, next func())) {
+func Favicon(opt FavOpt) (func(req *Request, res *Response, next func())) {
     return faviconHandler
 }

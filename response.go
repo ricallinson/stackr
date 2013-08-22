@@ -2,6 +2,7 @@ package connect
 
 import(
     "fmt"
+    "strings"
     "net/http"
 )
 
@@ -27,7 +28,11 @@ func (this *Response) SetHeader(key string, value string) (bool) {
     if this.HeaderSent == true {
         return false
     }
-    this.Writer.Header().Set(key, value)
+    /*
+        http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+        Message headers are case-insensitive so they are forced to lower case.
+    */
+    this.Writer.Header().Set(strings.ToLower(key), value)
     return true
 }
 

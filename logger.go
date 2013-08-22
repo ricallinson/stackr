@@ -10,7 +10,7 @@ import(
     Options for the logger middleware.
 */
 
-type LoggerOpt struct {
+type LogOpt struct {
     // format string
     // stream string
     // buffer int
@@ -22,10 +22,10 @@ type LoggerOpt struct {
     Format the log for "dev" mode.
 */
 
-func loggerFormatDev(options LoggerOpt, req *Request, res *Response) (string) {
+func loggerFormatDev(opt LogOpt, req *Request, res *Response) (string) {
 
     // Get the time taken in milliseconds.
-    totalTime := (time.Now().UnixNano() - options.startTime) / 1000000
+    totalTime := (time.Now().UnixNano() - opt.startTime) / 1000000
 
     // Get the status code for the request.
     status := res.StatusCode
@@ -65,24 +65,24 @@ func loggerFormatDev(options LoggerOpt, req *Request, res *Response) (string) {
     return log
 }
 
-func Logger(options LoggerOpt) (func(req *Request, res *Response, next func())) {
+func Logger(opt LogOpt) (func(req *Request, res *Response, next func())) {
 
     // Output on request instead of response.
-    immediate := options.immediate
+    immediate := opt.immediate
 
     // Return the handler function.
     return func(req *Request, res *Response, next func()) {
 
         // Grab the start time.
-        options.startTime = time.Now().UnixNano()
+        opt.startTime = time.Now().UnixNano()
 
         // Decide if we should log immediately or at the end of the request.
         if immediate {
-            line := loggerFormatDev(options, req, res)
+            line := loggerFormatDev(opt, req, res)
             fmt.Println(line)
         } else {
             next()
-            line := loggerFormatDev(options, req, res)
+            line := loggerFormatDev(opt, req, res)
             fmt.Println(line)
         }
     }
