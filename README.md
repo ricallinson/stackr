@@ -19,3 +19,7 @@ Connect is a middleware framework for Go, shipping with over 1 bundled middlewar
 
 * `Logger` request logger with currently __currently no__ custom format support
 * `Favicon` efficient favicon server (that doesn't work yet)
+
+## Notes
+
+In case you don't know this is clone of the Node.js library by the same name http://www.senchalabs.org/connect/.
