@@ -11,9 +11,9 @@ import(
 */
 
 type LoggerOpt struct {
-    format string
-    stream string
-    buffer int
+    // format string
+    // stream string
+    // buffer int
     immediate bool
     startTime int64
 }
