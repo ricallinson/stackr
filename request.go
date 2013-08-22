@@ -7,6 +7,7 @@ import(
 type Request struct {
     Raw *http.Request
     Url string
+    UrlMatched string
     OriginalUrl string
 }
 

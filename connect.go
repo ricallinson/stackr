@@ -108,6 +108,7 @@ func (this *ConnectServer) handle(req *Request, res *Response, index int) {
 
     // Otherwise call the layer handler
     if strings.Contains(strings.ToLower(req.Url), layer.Route) {
+        req.UrlMatched = layer.Route
         layer.Handle(req, res, func() {
             this.handle(req, res, index)
         })
