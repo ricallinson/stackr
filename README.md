@@ -1,6 +1,6 @@
 # Stack
 
-Stack is a middleware framework for Go, shipping with over 1 bundled middleware and a poor selection of 3rd-party middleware.
+Stack is a middleware framework for Go, shipping with over 2 bundled middleware and a poor selection of 3rd-party middleware.
 
     package main
     import "github.com/ricallinson/stack"
@@ -17,8 +17,9 @@ Stack is a middleware framework for Go, shipping with over 1 bundled middleware 
 
 ## Middleware
 
-* `Logger` request logger with currently __currently no__ custom format support
-* `Favicon` efficient favicon server (that doesn't work yet)
+* `Logger` request logger with __no__ custom format support
+* `Favicon` efficient favicon server
+* `Static` static file server currently based on http.FileServer
 
 ## Notes
 
