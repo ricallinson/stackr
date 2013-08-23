@@ -1,5 +1,7 @@
 # Stack
 
+[![Build Status](https://secure.travis-ci.org/ricallinson/stack.png?branch=master)](http://travis-ci.org/ricallinson/stack)
+
 Stack is a middleware framework for Go, shipping with over 2 bundled middleware and a poor selection of 3rd-party middleware.
 
     package main
