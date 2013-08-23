@@ -24,9 +24,17 @@ Stack is a middleware framework for Go, shipping with over 2 bundled middleware 
 
 ## Testing
 
-    go get github.com/axw/gocov/gocov
-    go test
+From the stack directory.
 
+    go test
+<!--
+### Code Coverage
+
+Not used yet.
+
+    go get github.com/axw/gocov/gocov
+    gocov test > report.json
+-->
 ## Notes
 
 This project started out as a clone of the Node.js library [Connect](http://www.senchalabs.org/connect/).
