@@ -1,4 +1,4 @@
-package connect
+package stack
 
 type middleware struct {
     Route string

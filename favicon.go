@@ -1,4 +1,4 @@
-package connect
+package stack
 
 import(
     "io"
@@ -15,7 +15,7 @@ type FavOpt struct {
 /*
     Favicon:
 
-    By default serves the connect favicon, or the favicon located by the given `path`.
+    By default serves the stack favicon, or the favicon located by the given `path`.
 
     Options:
 
@@ -25,17 +25,17 @@ type FavOpt struct {
 
         Serve default favicon:
 
-        connect.CreateServer().Use(connect.Favicon(connect.FavOpt{}))
+        stack.CreateServer().Use(stack.Favicon(stack.FavOpt{}))
 
     Serve favicon before logging for brevity:
 
-        app := connect.CreateServer()
-        app.use(connect.Favicon(connect.FavOpt{}))
-        app.use(connect.Logger(connect.LogOpt{}))
+        app := stack.CreateServer()
+        app.use(stack.Favicon(stack.FavOpt{}))
+        app.use(stack.Logger(stack.LogOpt{}))
 
     Serve custom favicon:
     
-        connect.CreateServer().Use(connect.Favicon(connect.FavOpt{path "public/favicon.ico"}))
+        stack.CreateServer().Use(stack.Favicon(stack.FavOpt{path "public/favicon.ico"}))
  */
 
 func Favicon(opt FavOpt) (func(req *Request, res *Response, next func())) {

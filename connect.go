@@ -1,4 +1,4 @@
-package connect
+package stack
 
 import(
     "fmt"
@@ -7,16 +7,16 @@ import(
     "net/http"
 )
 
-type ConnectServer struct {
+type Server struct {
     stack []middleware
 }
 
 /*
-    Create a new connect server.
+    Create a new stack server.
 */
 
-func CreateServer() (*ConnectServer) {
-    return new(ConnectServer)
+func CreateServer() (*Server) {
+    return new(Server)
 }
 
 /*
@@ -32,22 +32,22 @@ func CreateServer() (*ConnectServer) {
 
     Examples:
 
-        var app = connect.CreateServer();
-        app.use(connect.favicon.Load());
-        app.use(connect.logger.Load());
-        app.use(connect.static.Load("./public"));
+        var app = stack.CreateServer();
+        app.use(stack.favicon.Load());
+        app.use(stack.logger.Load());
+        app.use(stack.static.Load("./public"));
 
     If we wanted to prefix static files with _/public_, we could
     "mount" the `static()` middleware:
 
-        app.use("/public", connect.static.Load(__dirname + "/public"));
+        app.use("/public", stack.static.Load(__dirname + "/public"));
 
     This api is chainable, so the following is valid:
 
-        connect.CreateServer().use(connect.favicon.Load()).listen(3000);
+        stack.CreateServer().use(stack.favicon.Load()).listen(3000);
 */ 
 
-func (this *ConnectServer) Use(route string, handle func(*Request, *Response, func())) (*ConnectServer) {
+func (this *Server) Use(route string, handle func(*Request, *Response, func())) (*Server) {
 
     // If the route is empty make it "/"
     if len(route) == 0 {
@@ -72,7 +72,7 @@ func (this *ConnectServer) Use(route string, handle func(*Request, *Response, fu
     the middleware stack.   
 */
 
-func (this *ConnectServer) handle(req *Request, res *Response, index int) {
+func (this *Server) handle(req *Request, res *Response, index int) {
 
     var layer middleware
 
@@ -118,10 +118,10 @@ func (this *ConnectServer) handle(req *Request, res *Response, index int) {
 }
 
 /*
-    Listen for connections on HTTP.
+    Listen for stackions on HTTP.
 */
 
-func (this *ConnectServer) Listen(port int) {
+func (this *Server) Listen(port int) {
 
     address := ":" + fmt.Sprint(port)
 
@@ -129,10 +129,10 @@ func (this *ConnectServer) Listen(port int) {
 }
 
 /*
-    Listen for connections on HTTPS.
+    Listen for stackions on HTTPS.
 */
 
-func (this *ConnectServer) ListenTLS(port int, certFile string, keyFile string) {
+func (this *Server) ListenTLS(port int, certFile string, keyFile string) {
 
     address := ":" + fmt.Sprint(port)
 

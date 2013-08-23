@@ -1,14 +1,14 @@
-package connect
+package stack
 
 import(
     "net/http"
 )
 
 type httpHandler struct {
-    server *ConnectServer
+    server *Server
 }
 
-func createHttpHandler(server *ConnectServer) http.Handler {
+func createHttpHandler(server *Server) http.Handler {
     return &httpHandler{server: server}
 }
 

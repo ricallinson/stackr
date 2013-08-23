@@ -1,4 +1,4 @@
-package connect
+package stack
 
 import(
     "fmt"
@@ -89,7 +89,7 @@ func (this *Response) Write(data string) (bool) {
 }
 
 /*
-    Closes the connection to the client.
+    Closes the stackion to the client.
 */
 
 func (this *Response) End(data string) (bool) {
