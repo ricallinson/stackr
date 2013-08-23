@@ -22,6 +22,11 @@ Stack is a middleware framework for Go, shipping with over 2 bundled middleware 
 * `Favicon` efficient favicon server
 * `Static` static file server currently based on http.FileServer
 
+## Testing
+
+    go get github.com/axw/gocov/gocov
+    go test
+
 ## Notes
 
 This project started out as a clone of the Node.js library [Connect](http://www.senchalabs.org/connect/).

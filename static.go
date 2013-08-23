@@ -2,7 +2,6 @@ package stack
 
 import(
     "os"
-    "fmt"
     "net/http"
 )
 
