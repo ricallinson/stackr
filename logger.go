@@ -8,14 +8,115 @@ import(
 
 /*
     Options for the logger middleware.
+
+    Note: future options commented out.
 */
 
 type LogOpt struct {
     // format string
     // stream string
     // buffer int
-    immediate bool
+    Immediate bool
     startTime int64
+}
+
+/*
+    Logger:
+
+    Log requests with the given `options` or a `format` string.
+
+    Options (not implemented yet):
+
+        - `format`  Format string, see below for tokens
+        - `stream`  Output stream, defaults to _stdout_
+        - `buffer`  Buffer duration, defaults to 1000ms when _true_
+        - `immediate`  Write log line on request instead of response (for response times)
+
+    Tokens:
+
+        - `:req[header]` ex: `:req[Accept]`
+        - `:res[header]` ex: `:res[Content-Length]`
+        - `:http-version`
+        - `:response-time`
+        - `:remote-addr`
+        - `:date`
+        - `:method`
+        - `:url`
+        - `:referrer`
+        - `:user-agent`
+        - `:status`
+
+    Formats:
+
+    Pre-defined formats that ship with connect:
+
+        - `default` ':remote-addr - - [:date] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"'
+        - `short` ':remote-addr - :method :url HTTP/:http-version :status :res[content-length] - :response-time ms'
+        - `tiny`  ':method :url :status :res[content-length] - :response-time ms'
+        - `dev` concise output colored by response status for development use
+
+    Examples:
+
+    app.Use("", stack.Logger(stack.LogOpt{})) // default
+    app.Use("", stack.Logger(stack.LogOpt{format: "short"}))
+    app.Use("", stack.Logger(stack.LogOpt{format: "tiny"}))
+    app.Use("", stack.Logger(stack.LogOpt{immediate: true, format: "dev"})
+    app.Use("", stack.Logger(stack.LogOpt{format: ":method :url - :referrer"})
+    app.Use("", stack.Logger(stack.LogOpt{format: ":req[content-type] -> :res[content-type]"})
+
+    Defining Formats:
+
+    All default formats are defined this way, however it's public API as well:
+
+        app.Logger.Format["name", "string or function"]
+*/
+
+func Logger(opt LogOpt) (func(req *Request, res *Response, next func())) {
+
+    /*
+        Output on request instead of response.
+    */
+
+    immediate := opt.Immediate
+
+    /*
+        Return the handler function.
+    */
+
+    return func(req *Request, res *Response, next func()) {
+
+        /*
+            Grab the start time.
+        */
+
+        opt.startTime = time.Now().UnixNano()
+
+        /*
+            If we are to log at the end of the request call next() now.
+        */
+
+        if immediate != true {
+
+            /*
+                Once all the other middleware has run, execution
+                will come back to this point and continue.
+            */
+
+            next()
+        }
+
+        /*
+            Format the log string requested (only dev at the moment).
+        */
+
+        line := loggerFormatDev(opt, req, res)
+
+        /*
+            Print the log to standard output.
+        */
+
+        fmt.Println(line)
+    }
 }
 
 /*
@@ -24,26 +125,44 @@ type LogOpt struct {
 
 func loggerFormatDev(opt LogOpt, req *Request, res *Response) (string) {
 
-    // Get the time taken in milliseconds.
+    /*
+        Get the time taken in milliseconds.
+    */
+
     totalTime := (time.Now().UnixNano() - opt.startTime) / 1000000
 
-    // Get the status code for the request.
+    /*
+        Get the status code for the request.
+    */
+
     status := res.StatusCode
 
-    // Get the length of the data sent.
+    /*
+        Get the length of the data sent.
+    */
+
     length, _ := strconv.Atoi(res.Writer.Header().Get("content-length"))
 
-    // The length as a string.
+    /*
+        The length as a string.
+    */
+
     strLen := ""
 
     if length > 0 {
         strLen = " - " + fmt.Sprint(length);
     }
 
-    // Set the default color for the log.
+    /*
+        Set the default color for the log.
+    */
+
     color := 32
 
-    // Pick a color for the log.
+    /*
+        Pick a color for the log.
+    */
+
     switch {
     case status >= 500:
         color = 31
@@ -53,7 +172,10 @@ func loggerFormatDev(opt LogOpt, req *Request, res *Response) (string) {
         color = 36
     }
 
-    // Build the log line.
+    /*
+        Build the log line.
+    */
+
     log := "\x1b[90m" + req.Raw.Method
     log += " " + req.OriginalUrl + " "
     log += "\x1b[" + fmt.Sprint(color) + "m" + fmt.Sprint(status)
@@ -62,28 +184,9 @@ func loggerFormatDev(opt LogOpt, req *Request, res *Response) (string) {
     log += "ms" + strLen
     log += "\x1b[0m"
 
+    /*
+        Return the log string.
+    */
+
     return log
-}
-
-func Logger(opt LogOpt) (func(req *Request, res *Response, next func())) {
-
-    // Output on request instead of response.
-    immediate := opt.immediate
-
-    // Return the handler function.
-    return func(req *Request, res *Response, next func()) {
-
-        // Grab the start time.
-        opt.startTime = time.Now().UnixNano()
-
-        // Decide if we should log immediately or at the end of the request.
-        if immediate {
-            line := loggerFormatDev(opt, req, res)
-            fmt.Println(line)
-        } else {
-            next()
-            line := loggerFormatDev(opt, req, res)
-            fmt.Println(line)
-        }
-    }
 }

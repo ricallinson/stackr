@@ -7,6 +7,10 @@ import(
     "crypto/md5"
 )
 
+/*
+    The options for the favicon middleware.
+*/
+
 type FavOpt struct {
     Path string
     MaxAge int
@@ -40,49 +44,95 @@ type FavOpt struct {
 
 func Favicon(opt FavOpt) (func(req *Request, res *Response, next func())) {
 
+    /*
+        Create an Icon.
+    */
+
     type Icon struct {
         headers map[string]string
         body []byte
     }
 
+    /*
+        Create a new map.
+    */
+
     icon := Icon{
         headers: make(map[string]string),
     }
 
+    /*
+        Set the default maxAge.
+    */
+
     maxAge := 86400000
+
+    /*
+        If we were given a max age use it.
+    */
 
     if opt.MaxAge > 0 {
         maxAge = opt.MaxAge
     }
 
+    /*
+        Set the default path.
+    */
+
     path := "./favicon.ico"
+
+    /*
+        If we were given a path use it.
+    */
 
     if len(opt.Path) > 0 {
         path = opt.Path
     }
 
+    /*
+        The handler function returned to Use().
+    */
+
     return func(req *Request, res *Response, next func()) {
 
-        // If this is not a fav icon return fast
+        /*
+            If this is not a fav icon return fast
+        */
+
         if req.Url != "/favicon.ico" {
             return
         }
 
-        // If we have the icon cached, serve it.
+        /*
+            If we have the icon cached, serve it.
+        */
+
         if len(icon.body) > 0 {
             res.SetHeaders(icon.headers)
             res.WriteBytes(icon.body)
+            res.End("");
             return
         }
 
-        // Otherwise read the icon into cache.
+        /*
+            Otherwise read the icon into cache.
+        */
+
         buf, err := ioutil.ReadFile(path)
         if err != nil {
             return
         }
 
+        /*
+            Generate an MD5 of the icon to be used in the etag.
+        */
+
         hasher := md5.New()
         io.WriteString(hasher, fmt.Sprint(buf))
+
+        /*
+            Create headers for the icon.
+        */
 
         icon.headers["content-type"] = "image/x-icon"
         icon.headers["content-length"] = fmt.Sprint(len(buf))
@@ -90,7 +140,12 @@ func Favicon(opt FavOpt) (func(req *Request, res *Response, next func())) {
         icon.headers["cache-control"] = "public, max-age=" + fmt.Sprint(maxAge / 1000)
         icon.body = buf
 
+        /*
+            Serve the icon.
+        */
+
         res.SetHeaders(icon.headers)
         res.WriteBytes(icon.body)
+        res.End("");
     }
 }

@@ -7,6 +7,10 @@ import(
     "net/http"
 )
 
+/*
+    A Stack Server.
+*/
+
 type Server struct {
     stack []middleware
 }
@@ -49,39 +53,61 @@ func CreateServer() (*Server) {
 
 func (this *Server) Use(route string, handle func(*Request, *Response, func())) (*Server) {
 
-    // If the route is empty make it "/"
+    /*
+        If the route is empty make it "/".
+    */
+
     if len(route) == 0 {
         route = "/"
     }
 
-    // strip trailing slash
+    /*
+        Strip trailing slash
+    */
+
     if size := len(route); size > 1 && route[size-1] == '/' {
         route = route[:size-1]
     }
+
+    /*
+        Add the middleware to the stack.
+    */
 
     this.stack = append(this.stack, middleware{
         Route: strings.ToLower(route),
         Handle: handle,
     })
 
+    /*
+        Return the Server so calls can be chained.
+    */
+
     return this
 }
 
 /*
     Handle server requests, punting them down
-    the middleware stack.   
+    the middleware stack.
+
+    Note: this is a recursive function.
 */
 
 func (this *Server) handle(req *Request, res *Response, index int) {
 
     var layer middleware
 
-    // If the response has been closed return.
+    /*
+        If the response has been closed return.
+    */
+
     if res.Closed == true {
         return
     }
 
-    // Do we have another layer to use?
+    /*
+        Do we have another layer to use?
+    */
+
     if index >= len(this.stack) {
         layer = middleware{}
     } else {
@@ -89,7 +115,10 @@ func (this *Server) handle(req *Request, res *Response, index int) {
         index++
     }
 
-    // If there are no more layers and no headers have been sent return a 404.
+    /*
+        If there are no more layers and no headers have been sent return a 404.
+    */
+
     if layer.Handle == nil && res.HeaderSent == false {
         res.StatusCode = 404
         res.SetHeader("Content-Type", "text/plain")
@@ -101,40 +130,87 @@ func (this *Server) handle(req *Request, res *Response, index int) {
         return
     }
 
-    // If there are no more layers and headers were sent then we are done.
+    /*
+        If there are no more layers and headers were sent then we are done.
+    */
+
     if layer.Handle == nil {
         return
     }
 
-    // Otherwise call the layer handler
-    if strings.Contains(strings.ToLower(req.Url), layer.Route) {
-        req.UrlMatched = layer.Route
+    /*
+        Otherwise call the layer handler.
+    */
+
+    if strings.Contains(strings.ToLower(req.OriginalUrl), layer.Route) {
+
+        /*
+            Set the value of Url to the portion after the matched layer.Route
+        */
+
+        req.Url = strings.TrimPrefix(req.OriginalUrl, layer.Route)
+        
+        /*
+            Set the matched portion of the Url.
+        */
+
+        req.MatchedUrl = layer.Route
+
+        /*
+            Call the middleware function.
+        */
+
         layer.Handle(req, res, func() {
+
+            /*
+                The value of next is a function that calls this function again, passing the index value.
+            */
+
             this.handle(req, res, index)
         })
     }
+
+    /*
+        Call this function again, passing the index value.
+    */
 
     this.handle(req, res, index)
 }
 
 /*
-    Listen for stackions on HTTP.
+    Listen for connections on HTTP.
 */
 
 func (this *Server) Listen(port int) {
 
+    /*
+        Set the address to run on.
+    */
+
     address := ":" + fmt.Sprint(port)
+
+    /*
+        Start the server.
+    */
 
     log.Fatal(http.ListenAndServe(address, createHttpHandler(this)))
 }
 
 /*
-    Listen for stackions on HTTPS.
+    Listen for connections on HTTPS.
 */
 
 func (this *Server) ListenTLS(port int, certFile string, keyFile string) {
 
+    /*
+        Set the address to run on.
+    */
+
     address := ":" + fmt.Sprint(port)
+    
+    /*
+        Start the server.
+    */
 
     log.Fatal(http.ListenAndServeTLS(address, certFile, keyFile, createHttpHandler(this)))
 }
