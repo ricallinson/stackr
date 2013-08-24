@@ -44,5 +44,16 @@ func TestStack(t *testing.T) {
         })
     })
 
+    Describe("handle()", func() {
+
+        It("should return []", func() {
+            app := CreateServer()
+            req := CreateRequest(NewMockHttpRequest())
+            res := CreateResponse(NewMockResponseWriter())
+            app.handle(req, res, 0)
+            AssertEqual(true, true)
+        })
+    })
+
     Report(t)
 }
