@@ -15,8 +15,8 @@ func TestFavicon(t *testing.T) {
 
         BeforeEach(func() {
             app = CreateServer()
-            req = CreateRequest(NewMockHttpRequest())
-            res = CreateResponse(NewMockResponseWriter(false))
+            req = createRequest(NewMockHttpRequest())
+            res = createResponse(NewMockResponseWriter(false))
         })
 
         It("should return [false]", func() {
@@ -50,7 +50,7 @@ func TestFavicon(t *testing.T) {
             req.OriginalUrl = "/favicon.ico"
             app.Use("", Favicon(FavOpt{Path: "./fixtures/favicon.ico"}))
             app.handle(req, res, 0)
-            res = CreateResponse(NewMockResponseWriter(false))
+            res = createResponse(NewMockResponseWriter(false))
             app.handle(req, res, 0)
             AssertEqual(res.Writer.Header().Get("content-type"), "image/x-icon")
         })

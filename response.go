@@ -7,7 +7,7 @@ import(
 )
 
 /*
-    A Response.
+    A HTTP Response.
 */
 type Response struct {
     Writer http.ResponseWriter
@@ -17,9 +17,10 @@ type Response struct {
 }
 
 /*
-    Returns a new Response.
+    Returns a new HTTP Response.
 */
-func CreateResponse(writer http.ResponseWriter) (*Response) {
+
+func createResponse(writer http.ResponseWriter) (*Response) {
 
     /*
         Create a new Response.

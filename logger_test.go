@@ -16,8 +16,8 @@ func TestLogger(t *testing.T) {
 
         BeforeEach(func() {
             app = CreateServer()
-            req = CreateRequest(NewMockHttpRequest())
-            res = CreateResponse(NewMockResponseWriter(false))
+            req = createRequest(NewMockHttpRequest())
+            res = createResponse(NewMockResponseWriter(false))
         })
 
         It("should return [GET / 200 0ms]", func() {

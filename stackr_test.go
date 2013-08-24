@@ -53,8 +53,8 @@ func TestStack(t *testing.T) {
 
         BeforeEach(func() {
             app = CreateServer()
-            req = CreateRequest(NewMockHttpRequest())
-            res = CreateResponse(NewMockResponseWriter(false))
+            req = createRequest(NewMockHttpRequest())
+            res = createResponse(NewMockResponseWriter(false))
         })
 
         It("should return [true] after default function is called", func() {
@@ -183,7 +183,7 @@ func TestStack(t *testing.T) {
 
         It("should return [false] as the writer throws an error", func() {
             test := true
-            res = CreateResponse(NewMockResponseWriter(true))
+            res = createResponse(NewMockResponseWriter(true))
             app.Use("/", func(req *Request, res *Response, next func()) {
                 test = res.Write("foo")
             })

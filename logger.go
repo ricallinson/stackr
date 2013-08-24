@@ -56,12 +56,12 @@ type LogOpt struct {
 
     Examples:
 
-    app.Use("", stackr.Logger(stackr.LogOpt{})) // default
-    app.Use("", stackr.Logger(stackr.LogOpt{format: "short"}))
-    app.Use("", stackr.Logger(stackr.LogOpt{format: "tiny"}))
-    app.Use("", stackr.Logger(stackr.LogOpt{immediate: true, format: "dev"})
-    app.Use("", stackr.Logger(stackr.LogOpt{format: ":method :url - :referrer"})
-    app.Use("", stackr.Logger(stackr.LogOpt{format: ":req[content-type] -> :res[content-type]"})
+        app.Use("", stackr.Logger(stackr.LogOpt{})) // default
+        app.Use("", stackr.Logger(stackr.LogOpt{format: "short"}))
+        app.Use("", stackr.Logger(stackr.LogOpt{format: "tiny"}))
+        app.Use("", stackr.Logger(stackr.LogOpt{immediate: true, format: "dev"})
+        app.Use("", stackr.Logger(stackr.LogOpt{format: ":method :url - :referrer"})
+        app.Use("", stackr.Logger(stackr.LogOpt{format: ":req[content-type] -> :res[content-type]"})
 
     Defining Formats:
 

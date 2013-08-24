@@ -5,7 +5,7 @@ import(
 )
 
 /*
-    A Request.
+    A HTTP Request.
 */
 type Request struct {
     Raw *http.Request
@@ -17,7 +17,8 @@ type Request struct {
 /*
     Returns a new Request.
 */
-func CreateRequest(raw *http.Request) (*Request) {
+
+func createRequest(raw *http.Request) (*Request) {
 
     /*
         Create a new Request.

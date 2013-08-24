@@ -10,13 +10,13 @@ func TestResponse(t *testing.T) {
     Describe("Response.Write()", func() {
 
         It("should return [true] after writing foo", func() {
-            res := CreateResponse(NewMockResponseWriter(false))
+            res := createResponse(NewMockResponseWriter(false))
             test := res.Write("foo")
             AssertEqual(test, true)
         })
 
         It("should return [false] after writing foo", func() {
-            res := CreateResponse(NewMockResponseWriter(true))
+            res := createResponse(NewMockResponseWriter(true))
             test := res.Write("foo")
             AssertEqual(test, false)
         })
@@ -25,13 +25,13 @@ func TestResponse(t *testing.T) {
     Describe("Response.WriteBytes()", func() {
 
         It("should return [true] after writing 1, 2, 3", func() {
-            res := CreateResponse(NewMockResponseWriter(false))
+            res := createResponse(NewMockResponseWriter(false))
             test := res.WriteBytes([]byte{1, 2, 3})
             AssertEqual(test, true)
         })
 
         It("should return [false] after writing 1, 2, 3", func() {
-            res := CreateResponse(NewMockResponseWriter(true))
+            res := createResponse(NewMockResponseWriter(true))
             test := res.WriteBytes([]byte{1, 2, 3})
             AssertEqual(test, false)
         })
@@ -39,7 +39,7 @@ func TestResponse(t *testing.T) {
 
     Describe("Response.SetHeaders()", func() {
 
-        res := CreateResponse(NewMockResponseWriter(false))
+        res := createResponse(NewMockResponseWriter(false))
 
         It("should return [value1] from setting the headers", func() {
             headers := map[string]string{"key0": "value0", "key1": "value1"}

@@ -30,5 +30,5 @@ func (this *handler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
         The results of these are then passed to stack.server.handle().
     */
 
-    this.server.handle(CreateRequest(req), CreateResponse(res), 0)
+    this.server.handle(createRequest(req), createResponse(res), 0)
 }
