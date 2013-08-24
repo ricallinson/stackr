@@ -37,7 +37,7 @@ From the stack directory.
     go get github.com/axw/gocov/gocov
     go get -u github.com/matm/gocov-html
 
-#### Run
+#### Generate
 
     gocov test | gocov-html > ./reports/coverage.html
 
