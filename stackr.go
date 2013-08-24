@@ -19,6 +19,15 @@ type Server struct {
 }
 
 /*
+    A middleware.
+*/
+
+type middleware struct {
+    Route string
+    Handle func(*Request, *Response, func())
+}
+
+/*
     Create a new stackr server.
 */
 func CreateServer() (*Server) {
