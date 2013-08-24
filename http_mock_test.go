@@ -2,6 +2,7 @@ package stack
 
 import(
     "errors"
+    "net/url"
     "net/http"
 )
 
@@ -10,7 +11,10 @@ import(
 */
 
 func NewMockHttpRequest() (*http.Request) {
-    req := &http.Request{RequestURI: "/"}
+    req := &http.Request{
+        RequestURI: "/",
+        URL: new(url.URL),
+    }
     return req
 }
 

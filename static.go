@@ -44,14 +44,23 @@ func Static(opt StaticOpt) (func(req *Request, res *Response, next func())) {
         The default loction of static files.
     */
 
-    root := "./static"
+    root := "./static/"
 
     /*
         If we were given a root use it.
     */
 
     if len(opt.Root) > 0 {
+
         root = opt.Root
+
+        /*
+            Add trailing slash if one is not there.
+        */
+
+        if size := len(root); size > 1 && root[size-1] != '/' {
+            root += "/"
+        }
     }
 
     /*
@@ -75,7 +84,7 @@ func Static(opt StaticOpt) (func(req *Request, res *Response, next func())) {
             Answer: It's not ideal. Writing a custom static server is on the todo list.
         */
 
-        if _, err := os.Stat(root + req.Url); os.IsNotExist(err) {
+        if stat, err := os.Stat(root + req.Url); err != nil || stat.IsDir() == true {
             return
         }
 
