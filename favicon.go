@@ -99,7 +99,7 @@ func Favicon(opt FavOpt) (func(req *Request, res *Response, next func())) {
             If this is not a fav icon return fast
         */
 
-        if req.Url != "/favicon.ico" {
+        if req.OriginalUrl != "/favicon.ico" {
             return
         }
 
@@ -120,6 +120,7 @@ func Favicon(opt FavOpt) (func(req *Request, res *Response, next func())) {
 
         buf, err := ioutil.ReadFile(path)
         if err != nil {
+            fmt.Println(err)
             return
         }
 

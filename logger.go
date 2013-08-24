@@ -14,7 +14,7 @@ import(
 
 type LogOpt struct {
     // format string
-    // stream string
+    Writer func(...interface {}) (int, error)
     // buffer int
     Immediate bool
     startTime int64
@@ -28,7 +28,7 @@ type LogOpt struct {
     Options (not implemented yet):
 
         - `format`  Format string, see below for tokens
-        - `stream`  Output stream, defaults to _stdout_
+        - `writer`  Output writer, defaults to _fmt.Println_
         - `buffer`  Buffer duration, defaults to 1000ms when _true_
         - `immediate`  Write log line on request instead of response (for response times)
 
@@ -74,6 +74,20 @@ type LogOpt struct {
 func Logger(opt LogOpt) (func(req *Request, res *Response, next func())) {
 
     /*
+        Set the default stream.
+    */
+
+    writer := fmt.Println
+
+    /*
+        If we were given a different stream use that.
+    */
+
+    if opt.Writer != nil {
+        writer = opt.Writer
+    }
+
+    /*
         Output on request instead of response.
     */
 
@@ -112,10 +126,10 @@ func Logger(opt LogOpt) (func(req *Request, res *Response, next func())) {
         line := loggerFormatDev(opt, req, res)
 
         /*
-            Print the log to standard output.
+            Print the log to stream function.
         */
 
-        fmt.Println(line)
+        writer(line)
     }
 }
 
