@@ -9,14 +9,14 @@ import(
 */
 
 type handler struct {
-    server *Server
+    server *server
 }
 
 /*
     Create a new handler that implements the http.Handler interface.
 */
 
-func createHttpHandler(server *Server) http.Handler {
+func createHttpHandler(server *server) http.Handler {
     return &handler{server: server}
 }
 

@@ -10,7 +10,7 @@ func TestHttp(t *testing.T) {
 
     Describe("createHttpHandler()", func() {
 
-        var app *Server
+        var app *server
 
         BeforeEach(func() {
             app = CreateServer()
@@ -25,7 +25,7 @@ func TestHttp(t *testing.T) {
 
     Describe("ServeHTTP()", func() {
 
-        var app *Server
+        var app *server
 
         BeforeEach(func() {
             app = CreateServer()

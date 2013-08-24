@@ -9,7 +9,7 @@ func TestStatic(t *testing.T) {
 
     Describe("Static()", func() {
 
-        var app *Server
+        var app *server
         var req *Request
         var res *Response
 

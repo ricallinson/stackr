@@ -9,7 +9,7 @@ func TestStack(t *testing.T) {
 
     Describe("Use()", func() {
 
-        var app *Server
+        var app *server
 
         BeforeEach(func() {
             app = CreateServer()
@@ -47,7 +47,7 @@ func TestStack(t *testing.T) {
 
     Describe("handle()", func() {
 
-        var app *Server
+        var app *server
         var req *Request
         var res *Response
 
