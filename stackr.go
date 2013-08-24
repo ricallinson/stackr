@@ -73,7 +73,7 @@ func CreateServer() (*Server) {
 
     This api is chainable, so the following is valid:
 
-        stack.CreateServer().use(stack.favicon.Load()).listen(3000);
+        stackr.CreateServer().Use(stackr.Favicon(stackr.FavOpt{})).Listen(3000);
 */ 
 func (this *Server) Use(route string, handle func(*Request, *Response, func())) (*Server) {
 
