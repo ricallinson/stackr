@@ -1,6 +1,7 @@
 package stack
 
 import(
+    "errors"
     "net/http"
 )
 
@@ -9,7 +10,7 @@ import(
 */
 
 func NewMockHttpRequest() (*http.Request) {
-    req := &http.Request{}
+    req := &http.Request{RequestURI: "/"}
     return req
 }
 
@@ -17,20 +18,26 @@ func NewMockHttpRequest() (*http.Request) {
     Create a Mock http.ResponseWriter for testing.
 */
 
-type MockResponseWriter struct {}
-
-func (this *MockResponseWriter) Header() (http.Header) {
-    return make(http.Header)
+type MockResponseWriter struct {
+    error bool
+    headers http.Header
 }
 
-func (this *MockResponseWriter) Write([]byte) (int, error) {
-    return 0, nil
+func (this *MockResponseWriter) Header() (http.Header) {
+    return this.headers
+}
+
+func (this *MockResponseWriter) Write(data []byte) (int, error) {
+    if this.error {
+        return 0, errors.New("")
+    }
+    return len(data), nil
 }
 
 func (this *MockResponseWriter) WriteHeader(code int) {
     return
 }
 
-func NewMockResponseWriter() (*MockResponseWriter) {
-    return new(MockResponseWriter)
+func NewMockResponseWriter(error bool) (*MockResponseWriter) {
+    return &MockResponseWriter{error, make(http.Header)}
 }
