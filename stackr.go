@@ -1,5 +1,19 @@
 /*
     Stackr is an extensible HTTP server framework for Go.
+
+        package main
+
+        import "github.com/ricallinson/stackr"
+
+        func main() {
+            app := stackr.CreateServer()
+            app.Use("/", stackr.Logger(stackr.LogOpt{}))
+            app.Use("/", stackr.Static(stackr.StaticOpt{}))
+            app.Use("/", func(req *stackr.Request, res *stackr.Response, next func()) {
+                res.End("hello world\n")
+            })
+            app.Listen(3000)
+        }
 */
 package stackr
 
