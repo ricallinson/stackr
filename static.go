@@ -8,7 +8,6 @@ import(
 /*
     Options for the static middleware. _Note: future options commented out._
 */
-
 type StaticOpt struct {
     Root string
     // MaxAge int64

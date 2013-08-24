@@ -25,9 +25,8 @@ import(
 )
 
 /*
-    A Server.
+    A Stackr Server.
 */
-
 type Server struct {
     stack []middleware
 }
