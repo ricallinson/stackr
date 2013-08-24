@@ -6,9 +6,7 @@ import(
 )
 
 /*
-    Options for the static middleware.
-
-    Note: future options commented out.
+    Options for the static middleware. _Note: future options commented out._
 */
 
 type StaticOpt struct {
@@ -26,16 +24,14 @@ type StaticOpt struct {
 
     Examples:
 
-        var oneDay = 86400000;
-
         stackr.CreateServer().Use("/", stackr.Static(stackr.StaticOpt{Root: "./public"}))
 
     Options (not implemented yet):
 
-        - `maxAge`     Browser cache maxAge in milliseconds. defaults to 0
-        - `hidden`     Allow transfer of hidden files. defaults to false
-        - `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
-        - `index`      Default file name, defaults to 'index.html'
+    - `maxAge`     Browser cache maxAge in milliseconds. defaults to 0
+    - `hidden`     Allow transfer of hidden files. defaults to false
+    - `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
+    - `index`      Default file name, defaults to 'index.html'
 */
 func Static(opt StaticOpt) (func(req *Request, res *Response, next func())) {
 

@@ -18,11 +18,11 @@ type FavOpt struct {
 /*
     Favicon:
 
-    By default serves the stack favicon, or the favicon located by the given `path`.
+    By default serves the stackr favicon, or the favicon located by the given `path`.
 
     Options:
 
-        - `maxAge`  cache-control max-age directive, defaulting to 1 day
+    - `maxAge`  cache-control max-age directive, defaulting to 1 day
 
     Examples:
 
@@ -38,7 +38,7 @@ type FavOpt struct {
 
     Serve custom favicon:
     
-        stack.CreateServer().Use(stack.Favicon(stack.FavOpt{path "public/favicon.ico"}))
+        stack.CreateServer().Use(stack.Favicon(stack.FavOpt{path "./public/favicon.ico"}))
  */
 func Favicon(opt FavOpt) (func(req *Request, res *Response, next func())) {
 
