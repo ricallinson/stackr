@@ -1,18 +1,18 @@
-# Stack
+# Stackr
 
 [![Build Status](https://secure.travis-ci.org/ricallinson/stack.png?branch=master)](http://travis-ci.org/ricallinson/stack)
 
-Stack is an extensible HTTP server framework for Go, shipping with over 2 bundled middleware and a poor selection of 3rd-party middleware.
+Stackr is an extensible HTTP server framework for Go, shipping with over 2 bundled middleware and a poor selection of 3rd-party middleware.
 
     package main
 
-    import "github.com/ricallinson/stack"
+    import "github.com/ricallinson/stackr"
 
     func main() {
-        app := stack.CreateServer()
-        app.Use("/", stack.Logger(stack.LogOpt{}))
-        app.Use("/", stack.Static(stack.StaticOpt{}))
-        app.Use("/", func(req *stack.Request, res *stack.Response, next func()) {
+        app := stackr.CreateServer()
+        app.Use("/", stackr.Logger(stackr.LogOpt{}))
+        app.Use("/", stackr.Static(stackr.StaticOpt{}))
+        app.Use("/", func(req *stackr.Request, res *stackr.Response, next func()) {
             res.End("hello world\n")
         })
         app.Listen(3000)

@@ -1,4 +1,4 @@
-package stack
+package stackr
 
 /*
     The middleware type.
