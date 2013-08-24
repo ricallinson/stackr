@@ -11,11 +11,10 @@ import(
 
     Note: future options commented out.
 */
-
 type LogOpt struct {
-    // format string
+    // Format map[string]string
     Writer func(...interface {}) (int, error)
-    // buffer int
+    // Buffer int
     Immediate bool
     startTime int64
 }
@@ -57,20 +56,19 @@ type LogOpt struct {
 
     Examples:
 
-    app.Use("", stack.Logger(stack.LogOpt{})) // default
-    app.Use("", stack.Logger(stack.LogOpt{format: "short"}))
-    app.Use("", stack.Logger(stack.LogOpt{format: "tiny"}))
-    app.Use("", stack.Logger(stack.LogOpt{immediate: true, format: "dev"})
-    app.Use("", stack.Logger(stack.LogOpt{format: ":method :url - :referrer"})
-    app.Use("", stack.Logger(stack.LogOpt{format: ":req[content-type] -> :res[content-type]"})
+    app.Use("", stackr.Logger(stackr.LogOpt{})) // default
+    app.Use("", stackr.Logger(stackr.LogOpt{format: "short"}))
+    app.Use("", stackr.Logger(stackr.LogOpt{format: "tiny"}))
+    app.Use("", stackr.Logger(stackr.LogOpt{immediate: true, format: "dev"})
+    app.Use("", stackr.Logger(stackr.LogOpt{format: ":method :url - :referrer"})
+    app.Use("", stackr.Logger(stackr.LogOpt{format: ":req[content-type] -> :res[content-type]"})
 
     Defining Formats:
 
     All default formats are defined this way, however it's public API as well:
 
-        app.Logger.Format["name", "string or function"]
+        stackr.LogOpt.Format["name"] = "string or function"
 */
-
 func Logger(opt LogOpt) (func(req *Request, res *Response, next func())) {
 
     /*

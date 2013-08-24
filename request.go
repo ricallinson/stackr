@@ -5,9 +5,8 @@ import(
 )
 
 /*
-    A stack.Request.
+    A Request.
 */
-
 type Request struct {
     Raw *http.Request
     Url string
@@ -16,9 +15,8 @@ type Request struct {
 }
 
 /*
-    Returns a new stack.Request.
+    Returns a new Request.
 */
-
 func CreateRequest(raw *http.Request) (*Request) {
 
     /*

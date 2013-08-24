@@ -8,23 +8,22 @@ import(
     A HTTP Handler for stack.
 */
 
-type Handler struct {
+type handler struct {
     server *Server
 }
 
 /*
-    Create a new stack.Handler that implements the http.Handler interface.
+    Create a new handler that implements the http.Handler interface.
 */
 
 func createHttpHandler(server *Server) http.Handler {
-    return &Handler{server: server}
+    return &handler{server: server}
 }
 
 /*
     Handles http requests and routes them to stack.server.handle().
 */
-
-func (this *Handler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+func (this *handler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
     /*
         Pass the res and req into there repective create functions.

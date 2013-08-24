@@ -28,7 +28,7 @@ type StaticOpt struct {
 
         var oneDay = 86400000;
 
-        stack.CreateServer().Use("/", stack.Static(stack.StaticOpt{Root: "./public"}))
+        stackr.CreateServer().Use("/", stackr.Static(stackr.StaticOpt{Root: "./public"}))
 
     Options (not implemented yet):
 
@@ -37,7 +37,6 @@ type StaticOpt struct {
         - `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
         - `index`      Default file name, defaults to 'index.html'
 */
-
 func Static(opt StaticOpt) (func(req *Request, res *Response, next func())) {
 
     /*

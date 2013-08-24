@@ -7,9 +7,8 @@ import(
 )
 
 /*
-    A stack.Response.
+    A Response.
 */
-
 type Response struct {
     Writer http.ResponseWriter
     HeaderSent bool
@@ -18,9 +17,8 @@ type Response struct {
 }
 
 /*
-    Returns a new stack.Response.
+    Returns a new Response.
 */
-
 func CreateResponse(writer http.ResponseWriter) (*Response) {
 
     /*
@@ -51,7 +49,6 @@ func CreateResponse(writer http.ResponseWriter) (*Response) {
 /*
     Set a map of headers, calls SetHeader() for each item.
 */
-
 func (this *Response) SetHeaders(headers map[string]string) (bool) {
     for key, value := range headers {
         if this.SetHeader(key, value) == false {
@@ -66,7 +63,6 @@ func (this *Response) SetHeaders(headers map[string]string) (bool) {
 
     Note: all keys are converted to lower case.
 */
-
 func (this *Response) SetHeader(key string, value string) (bool) {
 
     /*
@@ -113,7 +109,6 @@ func (this *Response) writeHeaders() {
 /*
     Write bytes to the client.
 */
-
 func (this *Response) WriteBytes(data []byte) (bool) {
 
     /*
@@ -148,7 +143,6 @@ func (this *Response) WriteBytes(data []byte) (bool) {
 /*
     Write data to the client.
 */
-
 func (this *Response) Write(data string) (bool) {
 
     /*
@@ -183,7 +177,6 @@ func (this *Response) Write(data string) (bool) {
 /*
     Close the connection to the client.
 */
-
 func (this *Response) End(data string) (bool) {
 
     /*

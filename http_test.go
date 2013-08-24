@@ -19,7 +19,7 @@ func TestHttp(t *testing.T) {
         It("should return [*stack.Handler]", func() {
             app := CreateServer()
             handler := createHttpHandler(app)
-            AssertEqual(reflect.TypeOf(handler).String(), "*stackr.Handler")
+            AssertEqual(reflect.TypeOf(handler).String(), "*stackr.handler")
         })
     })
 

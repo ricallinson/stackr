@@ -1,3 +1,6 @@
+/*
+    Stackr is an extensible HTTP server framework for Go.
+*/
 package stackr
 
 import(
@@ -8,17 +11,15 @@ import(
 )
 
 /*
-    A Stack Server.
+    A Server.
 */
-
 type Server struct {
     stack []middleware
 }
 
 /*
-    Create a new stack server.
+    Create a new stackr server.
 */
-
 func CreateServer() (*Server) {
     return new(Server)
 }
@@ -36,21 +37,20 @@ func CreateServer() (*Server) {
 
     Examples:
 
-        var app = stack.CreateServer();
-        app.use(stack.favicon.Load());
-        app.use(stack.logger.Load());
-        app.use(stack.static.Load("./public"));
+        var app = stackr.CreateServer();
+        app.Use("/", stackr.Favicon(stackr.FavOpt{}))
+        app.Use("/", stackr.Logger(stackr.LogOpt{}))
+        app.Use("/", stackr.Static(stackr.StaticOpt{}))
 
     If we wanted to prefix static files with _/public_, we could
-    "mount" the `static()` middleware:
+    "mount" the `Static()` middleware:
 
-        app.use("/public", stack.static.Load(__dirname + "/public"));
+        app.Use("/public", stackr.Static(stackr.StaticOpt{Root: "./static_files"}))
 
     This api is chainable, so the following is valid:
 
         stack.CreateServer().use(stack.favicon.Load()).listen(3000);
 */ 
-
 func (this *Server) Use(route string, handle func(*Request, *Response, func())) (*Server) {
 
     /*
@@ -91,7 +91,6 @@ func (this *Server) Use(route string, handle func(*Request, *Response, func())) 
 
     Note: this is a recursive function.
 */
-
 func (this *Server) handle(req *Request, res *Response, index int) {
 
     var layer middleware
@@ -180,7 +179,6 @@ func (this *Server) handle(req *Request, res *Response, index int) {
 /*
     Listen for connections on HTTP.
 */
-
 func (this *Server) Listen(port int) {
 
     /*
@@ -199,7 +197,6 @@ func (this *Server) Listen(port int) {
 /*
     Listen for connections on HTTPS.
 */
-
 func (this *Server) ListenTLS(port int, certFile string, keyFile string) {
 
     /*

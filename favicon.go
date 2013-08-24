@@ -10,7 +10,6 @@ import(
 /*
     The options for the favicon middleware.
 */
-
 type FavOpt struct {
     Path string
     MaxAge int
@@ -29,19 +28,18 @@ type FavOpt struct {
 
         Serve default favicon:
 
-        stack.CreateServer().Use(stack.Favicon(stack.FavOpt{}))
+        stackr.CreateServer().Use(stackr.Favicon(stackr.FavOpt{}))
 
     Serve favicon before logging for brevity:
 
-        app := stack.CreateServer()
-        app.use(stack.Favicon(stack.FavOpt{}))
-        app.use(stack.Logger(stack.LogOpt{}))
+        app := stackr.CreateServer()
+        app.Use(stackr.Favicon(stackr.FavOpt{}))
+        app.Use(stackr.Logger(stackr.LogOpt{}))
 
     Serve custom favicon:
     
         stack.CreateServer().Use(stack.Favicon(stack.FavOpt{path "public/favicon.ico"}))
  */
-
 func Favicon(opt FavOpt) (func(req *Request, res *Response, next func())) {
 
     /*
