@@ -73,6 +73,15 @@ func TestStatic(t *testing.T) {
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 200)
         })
+
+        It("should return [200] from a cached file", func() {
+            req.OriginalUrl = "/text.txt"
+            app.Use("", Static(StaticOpt{Root: "./fixtures"}))
+            app.handle(req, res, 0)
+            app.handle(req, res, 0)
+            app.handle(req, res, 0)
+            AssertEqual(res.StatusCode, 200)
+        })
     })
 
     Report(t)

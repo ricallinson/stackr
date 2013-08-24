@@ -11,9 +11,9 @@ Stack is a middleware framework for Go, shipping with over 2 bundled middleware 
     func main() {
         app := stack.CreateServer()
         app.Use("", stack.Logger(stack.LogOpt{}))
-        app.Use("", stack.Favicon(stack.FavOpt{}))
+        app.Use("", stack.Static(stack.StaticOpt{}))
         app.Use("/", func(req *stack.Request, res *stack.Response, next func()) {
-            res.End("Hello world\n")
+            res.End("hello world\n")
         })
         app.Listen(3000)
     }

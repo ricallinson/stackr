@@ -41,10 +41,16 @@ type StaticOpt struct {
 func Static(opt StaticOpt) (func(req *Request, res *Response, next func())) {
 
     /*
+        File Stat Cache.
+    */
+
+    statCache := make(map[string]int)
+
+    /*
         The default loction of static files.
     */
 
-    root := "./static/"
+    root := "./public/"
 
     /*
         If we were given a root use it.
@@ -84,8 +90,42 @@ func Static(opt StaticOpt) (func(req *Request, res *Response, next func())) {
             Answer: It's not ideal. Writing a custom static server is on the todo list.
         */
 
-        if stat, err := os.Stat(root + req.Url); err != nil || stat.IsDir() == true {
+        filepath := root + req.Url
+
+        /*
+            Check the stat cache as it's quicker than doing a stat on a file.
+        */
+
+        if statCache[filepath] == -1 {
             return
+        }
+
+        /*
+            If the value of stat cache is 0 it means this is the first request for the filename.
+        */
+
+        if statCache[filepath] == 0 {
+
+            /*
+                Stat the filename.
+            */
+
+            if stat, err := os.Stat(filepath); err != nil || stat.IsDir() == true {
+
+                /*
+                    If there is no file set stat cache to -1 and return.
+                */
+
+                statCache[filepath] = -1
+
+                return
+            }
+
+            /*
+                If there was a file set stat cache to 1 and let the FileServer serve it.
+            */
+
+            statCache[filepath] = 1
         }
 
         /*
