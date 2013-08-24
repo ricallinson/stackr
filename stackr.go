@@ -14,15 +14,15 @@ import(
     A Server.
 */
 
-type server struct {
+type Server struct {
     stack []middleware
 }
 
 /*
     Create a new stackr server.
 */
-func CreateServer() (*server) {
-    return new(server)
+func CreateServer() (*Server) {
+    return new(Server)
 }
 
 /*
@@ -52,7 +52,7 @@ func CreateServer() (*server) {
 
         stack.CreateServer().use(stack.favicon.Load()).listen(3000);
 */ 
-func (this *server) Use(route string, handle func(*Request, *Response, func())) (*server) {
+func (this *Server) Use(route string, handle func(*Request, *Response, func())) (*Server) {
 
     /*
         If the route is empty make it "/".
@@ -92,7 +92,7 @@ func (this *server) Use(route string, handle func(*Request, *Response, func())) 
 
     Note: this is a recursive function.
 */
-func (this *server) handle(req *Request, res *Response, index int) {
+func (this *Server) handle(req *Request, res *Response, index int) {
 
     var layer middleware
 
@@ -180,7 +180,7 @@ func (this *server) handle(req *Request, res *Response, index int) {
 /*
     Listen for connections on HTTP.
 */
-func (this *server) Listen(port int) {
+func (this *Server) Listen(port int) {
 
     /*
         Set the address to run on.
@@ -198,7 +198,7 @@ func (this *server) Listen(port int) {
 /*
     Listen for connections on HTTPS.
 */
-func (this *server) ListenTLS(port int, certFile string, keyFile string) {
+func (this *Server) ListenTLS(port int, certFile string, keyFile string) {
 
     /*
         Set the address to run on.

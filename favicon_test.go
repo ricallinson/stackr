@@ -9,7 +9,7 @@ func TestFavicon(t *testing.T) {
 
     Describe("Favicon()", func() {
 
-        var app *server
+        var app *Server
         var req *Request
         var res *Response
 

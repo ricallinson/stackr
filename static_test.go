@@ -1,4 +1,4 @@
-package stackr
+    package stackr
 
 import(
     "testing"
@@ -9,7 +9,7 @@ func TestStatic(t *testing.T) {
 
     Describe("Static()", func() {
 
-        var app *server
+        var app *Server
         var req *Request
         var res *Response
 

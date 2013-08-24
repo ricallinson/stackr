@@ -10,7 +10,7 @@ func TestLogger(t *testing.T) {
 
     Describe("Logger()", func() {
 
-        var app *server
+        var app *Server
         var req *Request
         var res *Response
 
