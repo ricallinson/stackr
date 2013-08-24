@@ -28,10 +28,10 @@ type StaticOpt struct {
 
     Options (not implemented yet):
 
-    * `maxAge`     Browser cache maxAge in milliseconds. defaults to 0
-    * `hidden`     Allow transfer of hidden files. defaults to false
-    * `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
-    * `index`      Default file name, defaults to 'index.html'
+        * `maxAge`     Browser cache maxAge in milliseconds. defaults to 0
+        * `hidden`     Allow transfer of hidden files. defaults to false
+        * `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
+        * `index`      Default file name, defaults to 'index.html'
 */
 func Static(opt StaticOpt) (func(req *Request, res *Response, next func())) {
 

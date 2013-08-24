@@ -22,7 +22,7 @@ type FavOpt struct {
 
     Options:
 
-    * `maxAge`  cache-control max-age directive, defaulting to 1 day
+        * `maxAge`  cache-control max-age directive, defaulting to 1 day
 
     Examples:
 
