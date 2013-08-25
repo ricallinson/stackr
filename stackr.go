@@ -61,9 +61,9 @@ func CreateServer() (*Server) {
     Examples:
 
         var app = stackr.CreateServer();
-        app.Use("/", stackr.Favicon(stackr.FavOpt{}))
-        app.Use("/", stackr.Logger(stackr.LogOpt{}))
-        app.Use("/", stackr.Static(stackr.StaticOpt{}))
+        app.Use("/", stackr.Favicon())
+        app.Use("/", stackr.Logger())
+        app.Use("/", stackr.Static())
 
     If we wanted to prefix static files with _/public_, we could
     "mount" the `Static()` middleware:
