@@ -10,7 +10,7 @@ import(
     Options for the logger middleware. _Note: future options commented out._
 */
 type LogOpt struct {
-    // Format map[string]string
+    Format string
     Writer func(...interface {}) (int, error)
     // Buffer int
     Immediate bool
@@ -18,15 +18,25 @@ type LogOpt struct {
 }
 
 /*
+    Logger output format options.
+*/
+var loggerFormats map[string]string = map[string]string{
+    "default": ":remote-addr - - [:date] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"",
+    "short": ":remote-addr - :method :url HTTP/:http-version :status :res[content-length] - :response-time ms",
+    "tiny": ":method :url :status :res[content-length] - :response-time ms",
+    "dev": "",
+}
+
+/*
     Logger:
 
     Log requests with the given `options` or a `format` string.
 
-    __Options (not implemented yet):__
+    __Options:__
 
         * `format`  Format string, see below for tokens
         * `writer`  Output writer, defaults to _fmt.Println_
-        * `buffer`  Buffer duration, defaults to 1000ms when _true_
+        * `buffer`  (not implemented yet) Buffer duration, defaults to 1000ms when _true_
         * `immediate`  Write log line on request instead of response (for response times)
 
     Tokens:
@@ -55,17 +65,11 @@ type LogOpt struct {
     Examples:
 
         app.Use("/", stackr.Logger()) // default
-        app.Use("/", stackr.Logger(stackr.LogOpt{format: "short"}))
-        app.Use("/", stackr.Logger(stackr.LogOpt{format: "tiny"}))
-        app.Use("/", stackr.Logger(stackr.LogOpt{immediate: true, format: "dev"})
-        app.Use("/", stackr.Logger(stackr.LogOpt{format: ":method :url - :referrer"})
-        app.Use("/", stackr.Logger(stackr.LogOpt{format: ":req[content-type] -> :res[content-type]"})
-
-    Defining Formats:
-
-    All default formats are defined this way, however it's public API as well:
-
-        stackr.LogOpt.Format["name"] = "string or function"
+        app.Use("/", stackr.Logger(stackr.LogOpt{Format: "short"}))
+        app.Use("/", stackr.Logger(stackr.LogOpt{Format: "tiny"}))
+        app.Use("/", stackr.Logger(stackr.LogOpt{Immediate: true, Format: "dev"})
+        app.Use("/", stackr.Logger(stackr.LogOpt{Format: ":method :url - :referrer"})
+        app.Use("/", stackr.Logger(stackr.LogOpt{Format: ":req[content-type] -> :res[content-type]"})
 */
 func Logger(o ...LogOpt) (func(req *Request, res *Response, next func())) {
 
@@ -131,7 +135,13 @@ func Logger(o ...LogOpt) (func(req *Request, res *Response, next func())) {
             Format the log string requested (only dev at the moment).
         */
 
-        line := loggerFormatDev(opt, req, res)
+        var line string
+
+        if len(opt.Format) > 0 {
+            line = loggerFormat(opt, req, res, opt.Format)
+        } else {
+            line = loggerFormatDev(opt, req, res)
+        }
 
         /*
             Print the log to stream function.
@@ -139,6 +149,20 @@ func Logger(o ...LogOpt) (func(req *Request, res *Response, next func())) {
 
         writer(line)
     }
+}
+
+/*
+    Format the log with the given format string.
+*/
+
+func loggerFormat(opt LogOpt, req *Request, res *Response, format string) (string) {
+
+    /*
+        See if "format" is a key in loggerFormats.
+        If it is use it, otherwise use the value of format as the format.
+    */
+
+    return ""
 }
 
 /*
