@@ -22,25 +22,38 @@ type FavOpt struct {
 
     Options:
 
-        * `maxAge`  cache-control max-age directive, defaulting to 1 day
+        * `MaxAge`  cache-control max-age directive, defaulting to 1 day
 
     Examples:
 
         Serve default favicon:
 
-        stackr.CreateServer().Use(stackr.Favicon(stackr.FavOpt{}))
+        stackr.CreateServer().Use("/", stackr.Favicon())
+        stackr.CreateServer().Use("/", stackr.Favicon(statckr.FavOpt{MaxAge: 1000}))
 
     Serve favicon before logging for brevity:
 
         app := stackr.CreateServer()
-        app.Use(stackr.Favicon(stackr.FavOpt{}))
-        app.Use(stackr.Logger(stackr.LogOpt{}))
+        app.Use("/", stackr.Favicon())
+        app.Use("/", stackr.Logger())
 
     Serve custom favicon:
     
-        stack.CreateServer().Use(stack.Favicon(stack.FavOpt{path "./public/favicon.ico"}))
+        stack.CreateServer().Use("/", stack.Favicon(stack.FavOpt{path "./public/favicon.ico"}))
  */
-func Favicon(opt FavOpt) (func(req *Request, res *Response, next func())) {
+func Favicon(o ...FavOpt) (func(req *Request, res *Response, next func())) {
+
+    /*
+        If we got an StaticOpt use it.
+    */
+
+    var opt FavOpt
+
+    if len(o) == 1 {
+        opt = o[0]
+    } else {
+        opt = FavOpt{}
+    }
 
     /*
         Create an Icon.

@@ -22,7 +22,8 @@ type StaticOpt struct {
     Static file server with the given `root` path.
 
     Examples:
-
+    
+        stackr.CreateServer().Use("/", stackr.Static())
         stackr.CreateServer().Use("/", stackr.Static(stackr.StaticOpt{Root: "./public"}))
 
     Options (not implemented yet):
@@ -32,7 +33,19 @@ type StaticOpt struct {
         * `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
         * `index`      Default file name, defaults to 'index.html'
 */
-func Static(opt StaticOpt) (func(req *Request, res *Response, next func())) {
+func Static(o ...StaticOpt) (func(req *Request, res *Response, next func())) {
+
+    /*
+        If we got an StaticOpt use it.
+    */
+
+    var opt StaticOpt
+
+    if len(o) == 1 {
+        opt = o[0]
+    } else {
+        opt = StaticOpt{}
+    }
 
     /*
         File Stat Cache.

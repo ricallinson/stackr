@@ -7,8 +7,8 @@
 
         func main() {
             app := stackr.CreateServer()
-            app.Use("/", stackr.Logger(stackr.LogOpt{}))
-            app.Use("/", stackr.Static(stackr.StaticOpt{}))
+            app.Use("/", stackr.Logger())
+            app.Use("/", stackr.Static())
             app.Use("/", func(req *stackr.Request, res *stackr.Response, next func()) {
                 res.End("hello world\n")
             })
@@ -116,8 +116,6 @@ func (this *Server) Use(route string, handle func(*Request, *Response, func())) 
 */
 func (this *Server) handle(req *Request, res *Response, index int) {
 
-    var layer middleware
-
     /*
         If the response has been closed return.
     */
@@ -127,14 +125,20 @@ func (this *Server) handle(req *Request, res *Response, index int) {
     }
 
     /*
+        Create a var for the middleware.
+    */
+
+    var layer middleware
+
+    /*
         Do we have another layer to use?
     */
 
     if index >= len(this.stack) {
-        layer = middleware{}
+        layer = middleware{} // no
     } else {
-        layer = this.stack[index];
-        index++
+        layer = this.stack[index]; // yes
+        index++ // increment the index by 1
     }
 
     /*
@@ -153,7 +157,7 @@ func (this *Server) handle(req *Request, res *Response, index int) {
     }
 
     /*
-        If there are no more layers and headers were sent then we are done.
+        If there are no more layers and headers were sent then we are done so just return.
     */
 
     if layer.Handle == nil {

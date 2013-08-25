@@ -54,12 +54,12 @@ type LogOpt struct {
 
     Examples:
 
-        app.Use("", stackr.Logger(stackr.LogOpt{})) // default
-        app.Use("", stackr.Logger(stackr.LogOpt{format: "short"}))
-        app.Use("", stackr.Logger(stackr.LogOpt{format: "tiny"}))
-        app.Use("", stackr.Logger(stackr.LogOpt{immediate: true, format: "dev"})
-        app.Use("", stackr.Logger(stackr.LogOpt{format: ":method :url - :referrer"})
-        app.Use("", stackr.Logger(stackr.LogOpt{format: ":req[content-type] -> :res[content-type]"})
+        app.Use("/", stackr.Logger()) // default
+        app.Use("/", stackr.Logger(stackr.LogOpt{format: "short"}))
+        app.Use("/", stackr.Logger(stackr.LogOpt{format: "tiny"}))
+        app.Use("/", stackr.Logger(stackr.LogOpt{immediate: true, format: "dev"})
+        app.Use("/", stackr.Logger(stackr.LogOpt{format: ":method :url - :referrer"})
+        app.Use("/", stackr.Logger(stackr.LogOpt{format: ":req[content-type] -> :res[content-type]"})
 
     Defining Formats:
 
@@ -67,7 +67,19 @@ type LogOpt struct {
 
         stackr.LogOpt.Format["name"] = "string or function"
 */
-func Logger(opt LogOpt) (func(req *Request, res *Response, next func())) {
+func Logger(o ...LogOpt) (func(req *Request, res *Response, next func())) {
+
+    /*
+        If we got an LogOpt use it.
+    */
+
+    var opt LogOpt
+
+    if len(o) == 1 {
+        opt = o[0]
+    } else {
+        opt = LogOpt{}
+    }
 
     /*
         Set the default stream.
