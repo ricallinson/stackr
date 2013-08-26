@@ -2,6 +2,8 @@
 
 [![Build Status](https://secure.travis-ci.org/ricallinson/stackr.png?branch=master)](http://travis-ci.org/ricallinson/stackr)
 
+__WARNING: UNSTABLE API__
+
 Stackr is an extensible HTTP server framework for Go, shipping with over 2 bundled middleware and a poor selection of 3rd-party middleware.
 
     package main
