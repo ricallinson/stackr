@@ -8,7 +8,7 @@ import(
 /*
     Options for the static middleware. _Note: future options commented out._
 */
-type StaticOpt struct {
+type OptStatic struct {
     Root string
     // MaxAge int64
     // Hidden bool
@@ -24,7 +24,7 @@ type StaticOpt struct {
     Examples:
     
         stackr.CreateServer().Use("/", stackr.Static())
-        stackr.CreateServer().Use("/", stackr.Static(stackr.StaticOpt{Root: "./public"}))
+        stackr.CreateServer().Use("/", stackr.Static(stackr.OptStatic{Root: "./public"}))
 
     Options (not implemented yet):
 
@@ -33,18 +33,18 @@ type StaticOpt struct {
         * `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
         * `index`      Default file name, defaults to 'index.html'
 */
-func Static(o ...StaticOpt) (func(req *Request, res *Response, next func())) {
+func Static(o ...OptStatic) (func(req *Request, res *Response, next func())) {
 
     /*
-        If we got an StaticOpt use it.
+        If we got an OptStatic use it.
     */
 
-    var opt StaticOpt
+    var opt OptStatic
 
     if len(o) == 1 {
         opt = o[0]
     } else {
-        opt = StaticOpt{}
+        opt = OptStatic{}
     }
 
     /*

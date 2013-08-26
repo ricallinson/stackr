@@ -9,7 +9,7 @@ import(
 /*
     Options for the logger middleware. _Note: future options commented out._
 */
-type LogOpt struct {
+type OptLog struct {
     Format string
     Writer func(...interface {}) (int, error)
     // Buffer int
@@ -65,24 +65,24 @@ var loggerFormats map[string]string = map[string]string{
     Examples:
 
         app.Use("/", stackr.Logger()) // default
-        app.Use("/", stackr.Logger(stackr.LogOpt{Format: "short"}))
-        app.Use("/", stackr.Logger(stackr.LogOpt{Format: "tiny"}))
-        app.Use("/", stackr.Logger(stackr.LogOpt{Immediate: true, Format: "dev"})
-        app.Use("/", stackr.Logger(stackr.LogOpt{Format: ":method :url - :referrer"})
-        app.Use("/", stackr.Logger(stackr.LogOpt{Format: ":req[content-type] -> :res[content-type]"})
+        app.Use("/", stackr.Logger(stackr.OptLog{Format: "short"}))
+        app.Use("/", stackr.Logger(stackr.OptLog{Format: "tiny"}))
+        app.Use("/", stackr.Logger(stackr.OptLog{Immediate: true, Format: "dev"})
+        app.Use("/", stackr.Logger(stackr.OptLog{Format: ":method :url - :referrer"})
+        app.Use("/", stackr.Logger(stackr.OptLog{Format: ":req[content-type] -> :res[content-type]"})
 */
-func Logger(o ...LogOpt) (func(req *Request, res *Response, next func())) {
+func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
 
     /*
-        If we got an LogOpt use it.
+        If we got an OptLog use it.
     */
 
-    var opt LogOpt
+    var opt OptLog
 
     if len(o) == 1 {
         opt = o[0]
     } else {
-        opt = LogOpt{}
+        opt = OptLog{}
     }
 
     /*
@@ -155,7 +155,7 @@ func Logger(o ...LogOpt) (func(req *Request, res *Response, next func())) {
     Format the log with the given format string.
 */
 
-func loggerFormat(opt LogOpt, req *Request, res *Response, format string) (string) {
+func loggerFormat(opt OptLog, req *Request, res *Response, format string) (string) {
 
     /*
         See if "format" is a key in loggerFormats.
@@ -169,7 +169,7 @@ func loggerFormat(opt LogOpt, req *Request, res *Response, format string) (strin
     Format the log for "dev" mode.
 */
 
-func loggerFormatDev(opt LogOpt, req *Request, res *Response) (string) {
+func loggerFormatDev(opt OptLog, req *Request, res *Response) (string) {
 
     /*
         Get the time taken in milliseconds.

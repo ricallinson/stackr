@@ -68,7 +68,7 @@ func CreateServer() (*Server) {
     If we wanted to prefix static files with _/public_, we could
     "mount" the `Static()` middleware:
 
-        app.Use("/public", stackr.Static(stackr.StaticOpt{Root: "./static_files"}))
+        app.Use("/public", stackr.Static(stackr.OptStatic{Root: "./static_files"}))
 
     This api is chainable, so the following is valid:
 

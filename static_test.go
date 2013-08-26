@@ -26,63 +26,63 @@ func TestStatic(t *testing.T) {
         })
 
         It("should return [404]", func() {
-            app.Use("", Static(StaticOpt{}))
+            app.Use("", Static(OptStatic{}))
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 404)
         })
 
         It("should return [404] from a directory", func() {
             req.OriginalUrl = "/directory/"
-            app.Use("", Static(StaticOpt{Root: "./fixtures/"}))
+            app.Use("", Static(OptStatic{Root: "./fixtures/"}))
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 404)
         })
 
         It("should return [404] from a directory without a trailing slash", func() {
             req.OriginalUrl = "/directory"
-            app.Use("", Static(StaticOpt{Root: "./fixtures/"}))
+            app.Use("", Static(OptStatic{Root: "./fixtures/"}))
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 404)
         })
 
         It("should return [200] from a file", func() {
             req.OriginalUrl = "/text.txt"
-            app.Use("", Static(StaticOpt{Root: "./fixtures/"}))
+            app.Use("", Static(OptStatic{Root: "./fixtures/"}))
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 200)
         })
 
         It("should return [404] from a directory on /public path", func() {
             req.OriginalUrl = "/public/directory/"
-            app.Use("/public", Static(StaticOpt{Root: "./fixtures/"}))
+            app.Use("/public", Static(OptStatic{Root: "./fixtures/"}))
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 404)
         })
 
         It("should return [200] from a file on /public path", func() {
             req.OriginalUrl = "/public/text.txt"
-            app.Use("/public", Static(StaticOpt{Root: "./fixtures/"}))
+            app.Use("/public", Static(OptStatic{Root: "./fixtures/"}))
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 200)
         })
 
         It("should return [404] from a directory", func() {
             req.OriginalUrl = "/directory/"
-            app.Use("", Static(StaticOpt{Root: "./fixtures"}))
+            app.Use("", Static(OptStatic{Root: "./fixtures"}))
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 404)
         })
 
         It("should return [200] from a opt.Root with no trailing slash", func() {
             req.OriginalUrl = "/text.txt"
-            app.Use("", Static(StaticOpt{Root: "./fixtures"}))
+            app.Use("", Static(OptStatic{Root: "./fixtures"}))
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 200)
         })
 
         It("should return [200] from a cached file", func() {
             req.OriginalUrl = "/text.txt"
-            app.Use("", Static(StaticOpt{Root: "./fixtures"}))
+            app.Use("", Static(OptStatic{Root: "./fixtures"}))
             app.handle(req, res, 0)
             app.handle(req, res, 0)
             app.handle(req, res, 0)
