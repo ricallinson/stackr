@@ -10,8 +10,8 @@ Stackr is an extensible HTTP server framework for Go, shipping with over 2 bundl
 
     func main() {
         app := stackr.CreateServer()
-        app.Use("/", stackr.Logger(stackr.LogOpt{}))
-        app.Use("/", stackr.Static(stackr.StaticOpt{}))
+        app.Use("/", stackr.Logger())
+        app.Use("/", stackr.Static())
         app.Use("/", func(req *stackr.Request, res *stackr.Response, next func()) {
             res.End("hello world\n")
         })
@@ -26,7 +26,7 @@ Stackr is an extensible HTTP server framework for Go, shipping with over 2 bundl
 
 ## Testing
 
-From the stack directory.
+The following should all be executed from the `stackr` directory $GOPATH/src/github.com/ricallinson/stackr/.
 
     go test
 
@@ -43,4 +43,4 @@ From the stack directory.
 
 ## Notes
 
-This project started out as a clone of the Node.js library [Connect](http://www.senchalabs.org/connect/).
+This project started out as a clone of the superb Node.js library [Connect](http://www.senchalabs.org/connect/).
