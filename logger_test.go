@@ -22,6 +22,18 @@ func TestLogger(t *testing.T) {
 
         It("should return [GET / 200 0ms]", func() {
             req.Raw.Method = "GET"
+            test := false
+            app.Use("", Logger())
+            app.Use("", func(req *Request, res *Response, next func()) {
+                res.End("")
+                test = true
+            })
+            app.handle(req, res, 0)
+            AssertEqual(test, true)
+        })
+
+        It("should return [GET / 200 0ms] with config object", func() {
+            req.Raw.Method = "GET"
             test := ""
             writer := func(a ...interface{}) (int, error) {
                 test = a[0].(string)

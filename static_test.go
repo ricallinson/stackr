@@ -20,6 +20,12 @@ func TestStatic(t *testing.T) {
         })
 
         It("should return [404]", func() {
+            app.Use("", Static())
+            app.handle(req, res, 0)
+            AssertEqual(res.StatusCode, 404)
+        })
+
+        It("should return [404]", func() {
             app.Use("", Static(StaticOpt{}))
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 404)

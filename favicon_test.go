@@ -20,6 +20,12 @@ func TestFavicon(t *testing.T) {
         })
 
         It("should return [false]", func() {
+            app.Use("", Favicon())
+            app.handle(req, res, 0)
+            AssertNotEqual(res.Writer.Header().Get("content-type"), "image/x-icon")
+        })
+
+        It("should return [false]", func() {
             app.Use("", Favicon(FavOpt{}))
             app.handle(req, res, 0)
             AssertNotEqual(res.Writer.Header().Get("content-type"), "image/x-icon")
