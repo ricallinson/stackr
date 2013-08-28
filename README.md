@@ -30,6 +30,12 @@ Stackr is an extensible HTTP server framework for Go, shipping with over 2 bundl
 
 The following should all be executed from the `stackr` directory $GOPATH/src/github.com/ricallinson/stackr/.
 
+#### Install
+
+    go get github.com/ricallinson/simplebdd
+
+#### Run
+
     go test
 
 ### Code Coverage
