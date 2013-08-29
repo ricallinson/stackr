@@ -32,7 +32,7 @@ var loggerFormatOptions map[string]string = map[string]string{
     Logger format functions.
 */
 
-var loggerFormatFuncs map[string]func(*OptLog, *Request, *Response)string = map[string]func(*OptLog, *Request, *Response)string{
+var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = map[string]func(*OptLog, *Request, *Response)string{
     ":remote-addr": func(opt *OptLog, req *Request, res *Response) string {
         return ""
     },
@@ -224,7 +224,7 @@ func loggerFormatDev(opt OptLog, req *Request, res *Response) (string) {
         Get the length of the data sent.
     */
 
-    length, _ := strconv.Atoi(loggerFormatFuncs[":res[content-length]"](&opt, req, res))
+    length, _ := strconv.Atoi(loggerFormatFunctions[":res[content-length]"](&opt, req, res))
 
     /*
         The length as a string.
@@ -265,11 +265,11 @@ func loggerFormatDev(opt OptLog, req *Request, res *Response) (string) {
         Build the log line.
     */
 
-    log := "\x1b[90m" + req.Raw.Method
-    log += " " + req.OriginalUrl + " "
+    log := "\x1b[90m" + loggerFormatFunctions[":method"](&opt, req, res)
+    log += " " + loggerFormatFunctions[":url"](&opt, req, res) + " "
     log += "\x1b[" + fmt.Sprint(color) + "m" + fmt.Sprint(status)
     log += " \x1b[90m"
-    log += loggerFormatFuncs[":response-time"](&opt, req, res)
+    log += loggerFormatFunctions[":response-time"](&opt, req, res)
     log += "ms" + strLen
     log += "\x1b[0m"
 
