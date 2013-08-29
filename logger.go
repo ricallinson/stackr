@@ -20,11 +20,52 @@ type OptLog struct {
 /*
     Logger output format options.
 */
-var loggerFormats map[string]string = map[string]string{
+
+var loggerFormatOptions map[string]string = map[string]string{
     "default": ":remote-addr - - [:date] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"",
     "short": ":remote-addr - :method :url HTTP/:http-version :status :res[content-length] - :response-time ms",
     "tiny": ":method :url :status :res[content-length] - :response-time ms",
     "dev": "",
+}
+
+/*
+    Logger format functions.
+*/
+
+var loggerFormatFuncs map[string]func(*OptLog, *Request, *Response)string = map[string]func(*OptLog, *Request, *Response)string{
+    ":remote-addr": func(opt *OptLog, req *Request, res *Response) string {
+        return ""
+    },
+    ":date": func(opt *OptLog, req *Request, res *Response) string {
+        return ""
+    },
+    "remote-addr": func(opt *OptLog, req *Request, res *Response) string {
+        return ""
+    },
+    ":method": func(opt *OptLog, req *Request, res *Response) string {
+        return req.Raw.Method
+    },
+    ":url": func(opt *OptLog, req *Request, res *Response) string {
+        return req.OriginalUrl
+    },
+    ":http-version": func(opt *OptLog, req *Request, res *Response) string {
+        return ""
+    },
+    ":status": func(opt *OptLog, req *Request, res *Response) string {
+        return ""
+    },
+    ":res[content-length]": func(opt *OptLog, req *Request, res *Response) string {
+        return res.Writer.Header().Get("content-length")
+    },
+    ":referrer": func(opt *OptLog, req *Request, res *Response) string {
+        return ""
+    },
+    ":user-agent": func(opt *OptLog, req *Request, res *Response) string {
+        return ""
+    },
+    ":response-time": func(opt *OptLog, req *Request, res *Response) string {
+        return fmt.Sprint((time.Now().UnixNano() - opt.startTime) / 1000000)
+    },
 }
 
 /*
@@ -135,13 +176,7 @@ func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
             Format the log string requested (only dev at the moment).
         */
 
-        var line string
-
-        if len(opt.Format) > 0 {
-            line = loggerFormat(opt, req, res, opt.Format)
-        } else {
-            line = loggerFormatDev(opt, req, res)
-        }
+        line := loggerFormat(opt, req, res, opt.Format)
 
         /*
             Print the log to stream function.
@@ -159,10 +194,24 @@ func loggerFormat(opt OptLog, req *Request, res *Response, format string) (strin
 
     /*
         See if "format" is a key in loggerFormats.
-        If it is use it, otherwise use the value of format as the format.
+        If it is, use it, otherwise use the value of format as the format.
     */
 
-    return ""
+    template := loggerFormatOptions[format]
+
+    /*
+        If there is no match for the format then return the "dev" format.
+    */
+
+    if len(template) == 0 {
+        return loggerFormatDev(opt, req, res)
+    }
+
+    /*
+        Extract tokens form the string.
+    */
+
+    return template
 }
 
 /*
@@ -172,22 +221,10 @@ func loggerFormat(opt OptLog, req *Request, res *Response, format string) (strin
 func loggerFormatDev(opt OptLog, req *Request, res *Response) (string) {
 
     /*
-        Get the time taken in milliseconds.
-    */
-
-    totalTime := (time.Now().UnixNano() - opt.startTime) / 1000000
-
-    /*
-        Get the status code for the request.
-    */
-
-    status := res.StatusCode
-
-    /*
         Get the length of the data sent.
     */
 
-    length, _ := strconv.Atoi(res.Writer.Header().Get("content-length"))
+    length, _ := strconv.Atoi(loggerFormatFuncs[":res[content-length]"](&opt, req, res))
 
     /*
         The length as a string.
@@ -204,6 +241,12 @@ func loggerFormatDev(opt OptLog, req *Request, res *Response) (string) {
     */
 
     color := 32
+
+    /*
+        Get the status code for the request.
+    */
+
+    status := res.StatusCode
 
     /*
         Pick a color for the log.
@@ -226,7 +269,7 @@ func loggerFormatDev(opt OptLog, req *Request, res *Response) (string) {
     log += " " + req.OriginalUrl + " "
     log += "\x1b[" + fmt.Sprint(color) + "m" + fmt.Sprint(status)
     log += " \x1b[90m"
-    log += fmt.Sprint(totalTime)
+    log += loggerFormatFuncs[":response-time"](&opt, req, res)
     log += "ms" + strLen
     log += "\x1b[0m"
 
