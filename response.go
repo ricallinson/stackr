@@ -2,7 +2,7 @@ package stackr
 
 import(
     "fmt"
-    "strings"
+    // "strings"
     "net/http"
 )
 
@@ -79,7 +79,7 @@ func (this *Response) SetHeader(key string, value string) (bool) {
         Message headers are case-insensitive so they are forced to lower case.
     */
 
-    this.Writer.Header().Set(strings.ToLower(key), value)
+    this.Writer.Header().Set(key, value)
 
     /*
         The header was set so return true.
