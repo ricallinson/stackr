@@ -8,6 +8,10 @@ import(
 
 /*
     A HTTP Response.
+
+    .Writer.Header() http.Header
+    .Writer.Write([]byte) (int, error)
+    .Writer.WriteHeader(int)
 */
 type Response struct {
     Writer http.ResponseWriter
