@@ -39,7 +39,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer}))
+            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.End("")
             })
@@ -54,7 +54,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer}))
+            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.StatusCode = 300
                 res.End("")
@@ -70,7 +70,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer}))
+            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.StatusCode = 400
                 res.End("")
@@ -86,7 +86,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer}))
+            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.StatusCode = 500
                 res.End("")
@@ -102,7 +102,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer}))
+            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.StatusCode = 500
                 res.SetHeader("content-length", "100")
