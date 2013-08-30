@@ -1,6 +1,7 @@
 package stackr
 
 import(
+    "time"
     "errors"
     "testing"
     . "github.com/ricallinson/simplebdd"
@@ -110,6 +111,100 @@ func TestLogger(t *testing.T) {
             })
             app.handle(req, res, 0)
             AssertEqual(test, "\x1b[90mGET / \x1b[31m500 \x1b[90m0ms - 100\x1b[0m")
+        })
+
+        It("should return [GET - 200]", func() {
+            req.Raw.Method = "GET"
+            test := ""
+            writer := func(a ...interface{}) (int, error) {
+                test = a[0].(string)
+                return 0, errors.New("")
+            }
+            app.Use("", Logger(OptLog{Writer: writer, Format: ":method - :status - :res[content-length]"}))
+            app.Use("", func(req *Request, res *Response, next func()) {
+                res.StatusCode = 500
+                res.SetHeader("content-length", "100")
+                res.End("")
+            })
+            app.handle(req, res, 0)
+            AssertEqual(test, "GET - 500 - 100")
+        })
+    })
+
+    Describe("loggerFormatFunctions[match]()", func() {
+
+        var opt *OptLog
+        var req *Request
+        var res *Response
+
+        BeforeEach(func() {
+            opt = &OptLog{}
+            req = createRequest(NewMockHttpRequest())
+            res = createResponse(NewMockResponseWriter(false))
+        })
+
+        It("should return [0] from :res[content-length]", func() {
+            result := loggerFormatFunctions[":res[content-length]"](opt, req, res)
+            AssertEqual(result, "0")
+        })
+
+        It("should return [100] from :res[content-length]", func() {
+            res.SetHeader("content-length", "100")
+            result := loggerFormatFunctions[":res[content-length]"](opt, req, res)
+            AssertEqual(result, "100")
+        })
+
+        It("should return [HTTP/1.1] from :http-version]", func() {
+            req.Raw.Proto = "HTTP/1.1"
+            result := loggerFormatFunctions[":http-version"](opt, req, res)
+            AssertEqual(result, "HTTP/1.1")
+        })
+
+        It("should return [1] from :response-time]", func() {
+            /*
+                This test is time based and will come back to bite me.
+            */
+            opt.startTime = time.Now().UnixNano() - 1000000
+            result := loggerFormatFunctions[":response-time"](opt, req, res)
+            AssertEqual(result, "1")
+        })
+
+        It("should return [foo] from :remote-addr]", func() {
+            req.Raw.RemoteAddr = "foo"
+            result := loggerFormatFunctions[":remote-addr"](opt, req, res)
+            AssertEqual(result, "foo")
+        })
+
+        It("should return [25] from :date]", func() {
+            result := loggerFormatFunctions[":date"](opt, req, res)
+            AssertEqual(len(result), 25)
+        })
+
+        It("should return [GET] from :method]", func() {
+            req.Raw.Method = "GET"
+            result := loggerFormatFunctions[":method"](opt, req, res)
+            AssertEqual(result, "GET")
+        })
+
+        It("should return [/] from :url]", func() {
+            req.OriginalUrl = "/"
+            result := loggerFormatFunctions[":url"](opt, req, res)
+            AssertEqual(result, "/")
+        })
+
+        It("should return [] from :referrer]", func() {
+            result := loggerFormatFunctions[":referrer"](opt, req, res)
+            AssertEqual(result, "")
+        })
+
+        It("should return [] from :user-agent]", func() {
+            result := loggerFormatFunctions[":user-agent"](opt, req, res)
+            AssertEqual(result, "")
+        })
+
+        It("should return [200] from :status]", func() {
+            result := loggerFormatFunctions[":status"](opt, req, res)
+            AssertEqual(result, "200")
         })
     })
 
