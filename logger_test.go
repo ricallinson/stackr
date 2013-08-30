@@ -177,7 +177,7 @@ func TestLogger(t *testing.T) {
 
         It("should return [25] from :date]", func() {
             result := loggerFormatFunctions[":date"](opt, req, res)
-            AssertEqual(len(result), 25)
+            AssertEqual(len(result), 31)
         })
 
         It("should return [GET] from :method]", func() {

@@ -76,7 +76,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
     */
 
     ":date": func(opt *OptLog, req *Request, res *Response) string {
-        return time.Now().Format(time.RFC3339)
+        return time.Now().Format(time.RFC1123Z)
     },
 
     /*
