@@ -3,6 +3,7 @@ package stackr
 import(
     "fmt"
     "time"
+    "strings"
     "strconv"
 )
 
@@ -22,8 +23,8 @@ type OptLog struct {
 */
 
 var loggerFormatOptions map[string]string = map[string]string{
-    "default": ":remote-addr - - [:date] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"",
-    "short": ":remote-addr - :method :url HTTP/:http-version :status :res[content-length] - :response-time ms",
+    "default": ":remote-addr - - [:date] \":method :url :http-version\" :status :res[content-length] \":referrer\" \":user-agent\"",
+    "short": ":remote-addr - :method :url :http-version :status :res[content-length] - :response-time ms",
     "tiny": ":method :url :status :res[content-length] - :response-time ms",
     "dev": "",
 }
@@ -33,38 +34,89 @@ var loggerFormatOptions map[string]string = map[string]string{
 */
 
 var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = map[string]func(*OptLog, *Request, *Response)string{
+
+    /*
+        Response header content-length.
+    */
+
+    ":res[content-length]": func(opt *OptLog, req *Request, res *Response) string {
+        length := res.Writer.Header().Get("content-length")
+        if len(length) == 0 {
+            length = "0"
+        }
+        return length
+    },
+
+    /*
+        HTTP version.
+    */
+
+    ":http-version": func(opt *OptLog, req *Request, res *Response) string {
+        return req.Raw.Proto
+    },
+
+    /*
+        Response time in milliseconds.
+    */
+
+    ":response-time": func(opt *OptLog, req *Request, res *Response) string {
+        return fmt.Sprint((time.Now().UnixNano() - opt.startTime) / 1000000)
+    },
+
+    /*
+        Remote address.
+    */
+
     ":remote-addr": func(opt *OptLog, req *Request, res *Response) string {
-        return ""
+        return req.Raw.RemoteAddr
     },
+
+    /*
+        UTC date.
+    */
+
     ":date": func(opt *OptLog, req *Request, res *Response) string {
-        return ""
+        return time.Now().Format(time.RFC3339)
     },
-    "remote-addr": func(opt *OptLog, req *Request, res *Response) string {
-        return ""
-    },
+
+    /*
+        Request method.
+    */
+
     ":method": func(opt *OptLog, req *Request, res *Response) string {
         return req.Raw.Method
     },
+
+    /*
+        Request url.
+    */
+
     ":url": func(opt *OptLog, req *Request, res *Response) string {
         return req.OriginalUrl
     },
-    ":http-version": func(opt *OptLog, req *Request, res *Response) string {
-        return ""
-    },
-    ":status": func(opt *OptLog, req *Request, res *Response) string {
-        return ""
-    },
-    ":res[content-length]": func(opt *OptLog, req *Request, res *Response) string {
-        return res.Writer.Header().Get("content-length")
-    },
+
+    /*
+        Normalized referrer.
+    */
+
     ":referrer": func(opt *OptLog, req *Request, res *Response) string {
-        return ""
+        return req.Raw.Referer()
     },
+
+    /*
+        UA string.
+    */
+
     ":user-agent": func(opt *OptLog, req *Request, res *Response) string {
-        return ""
+        return req.Raw.UserAgent()
     },
-    ":response-time": func(opt *OptLog, req *Request, res *Response) string {
-        return fmt.Sprint((time.Now().UnixNano() - opt.startTime) / 1000000)
+
+    /*
+        Response status code.
+    */
+
+    ":status": func(opt *OptLog, req *Request, res *Response) string {
+        return fmt.Sprint(res.StatusCode)
     },
 }
 
@@ -82,8 +134,8 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
 
     Tokens:
 
-        * `:req[header]` ex: `:req[Accept]`
-        * `:res[header]` ex: `:res[Content-Length]`
+        * (not implemented) `:req[header]` ex: `:req[Accept]`
+        * `:res[Content-Length]`
         * `:http-version`
         * `:response-time`
         * `:remote-addr`
@@ -127,6 +179,14 @@ func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
     }
 
     /*
+        If we were not given a format use "default".
+    */
+
+    if opt.Format == "" {
+        opt.Format = "default"
+    }
+
+    /*
         Set the default stream.
     */
 
@@ -162,7 +222,7 @@ func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
             If we are to log at the end of the request call next() now.
         */
 
-        if immediate != true {
+        if immediate == false {
 
             /*
                 Once all the other middleware has run, execution
@@ -173,16 +233,10 @@ func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
         }
 
         /*
-            Format the log string requested (only dev at the moment).
+            Format the log string requested and write it to the stream function.
         */
 
-        line := loggerFormat(opt, req, res, opt.Format)
-
-        /*
-            Print the log to stream function.
-        */
-
-        writer(line)
+        writer(loggerFormat(opt, req, res, opt.Format))
     }
 }
 
@@ -193,25 +247,40 @@ func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
 func loggerFormat(opt OptLog, req *Request, res *Response, format string) (string) {
 
     /*
-        See if "format" is a key in loggerFormats.
-        If it is, use it, otherwise use the value of format as the format.
+        If format is "dev" we are done.
     */
 
-    template := loggerFormatOptions[format]
-
-    /*
-        If there is no match for the format then return the "dev" format.
-    */
-
-    if len(template) == 0 {
+    if format == "dev" {
         return loggerFormatDev(opt, req, res)
     }
 
     /*
-        Extract tokens form the string.
+        See if "format" is a key in loggerFormats.
     */
 
-    return template
+    log := loggerFormatOptions[format]
+
+    /*
+        If there is no format matched then use the format string as the log template.
+    */
+
+    if len(log) == 0 {
+        log = format
+    }
+
+    /*
+        Replace tokens in the log template string.
+    */
+
+    for match := range loggerFormatFunctions {
+        log = strings.Replace(log, match, loggerFormatFunctions[match](&opt, req, res), -1)
+    }
+
+    /*
+        Return the final string.
+    */
+
+    return log
 }
 
 /*
