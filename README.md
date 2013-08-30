@@ -22,7 +22,7 @@ Stackr is an extensible HTTP server framework for Go, shipping with over 2 bundl
 
 ## Middleware
 
-* `Logger` request logger with __no__ custom format support
+* `Logger` request logger with custom format support
 * `Favicon` efficient favicon server
 * `Static` static file server currently based on http.FileServer
 
