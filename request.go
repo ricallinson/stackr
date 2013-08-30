@@ -9,6 +9,7 @@ import(
 */
 type Request struct {
     Raw *http.Request
+    Headers *http.Header
     Url string
     MatchedUrl string
     OriginalUrl string
@@ -31,6 +32,12 @@ func createRequest(raw *http.Request) (*Request) {
     */
 
     req.Raw = raw
+
+    /*
+        Easy access to the header map.
+    */
+
+    req.Headers = &req.Raw.Header
 
     /*
         Set the Url for easy access.
