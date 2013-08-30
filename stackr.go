@@ -148,11 +148,11 @@ func (this *Server) handle(req *Request, res *Response, index int) {
     if layer.Handle == nil && res.HeaderSent == false {
         res.StatusCode = 404
         res.SetHeader("Content-Type", "text/plain")
-        if req.Raw.Method == "HEAD" {
+        if req.Http.Method == "HEAD" {
             res.End("")
             return
         }
-        res.End("Cannot " + fmt.Sprint(req.Raw.Method) + " " + fmt.Sprint(req.OriginalUrl));
+        res.End("Cannot " + fmt.Sprint(req.Http.Method) + " " + fmt.Sprint(req.OriginalUrl));
         return
     }
 

@@ -52,7 +52,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
     */
 
     ":http-version": func(opt *OptLog, req *Request, res *Response) string {
-        return req.Raw.Proto
+        return req.Http.Proto
     },
 
     /*
@@ -68,7 +68,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
     */
 
     ":remote-addr": func(opt *OptLog, req *Request, res *Response) string {
-        return req.Raw.RemoteAddr
+        return req.Http.RemoteAddr
     },
 
     /*
@@ -84,7 +84,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
     */
 
     ":method": func(opt *OptLog, req *Request, res *Response) string {
-        return req.Raw.Method
+        return req.Http.Method
     },
 
     /*
@@ -100,7 +100,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
     */
 
     ":referrer": func(opt *OptLog, req *Request, res *Response) string {
-        return req.Raw.Referer()
+        return req.Http.Referer()
     },
 
     /*
@@ -108,7 +108,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
     */
 
     ":user-agent": func(opt *OptLog, req *Request, res *Response) string {
-        return req.Raw.UserAgent()
+        return req.Http.UserAgent()
     },
 
     /*

@@ -139,7 +139,7 @@ func Static(o ...OptStatic) (func(req *Request, res *Response, next func())) {
             If we have to serve a file strip the matched Url and call ServeHTTP() on the fileServer.
         */
 
-        http.StripPrefix(req.MatchedUrl, fileServer).ServeHTTP(res.Writer, req.Raw)
+        http.StripPrefix(req.MatchedUrl, fileServer).ServeHTTP(res.Writer, req.Http)
 
         /*
             Now call End() to make sure we don't process any more middleware.
