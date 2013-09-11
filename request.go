@@ -58,7 +58,7 @@ func createRequest(raw *http.Request) (*Request) {
         Note: this value may be changed by the stack.handle() function.
     */
 
-    req.Url = raw.RequestURI
+    req.Url = raw.URL.RequestURI()
 
     /*
         Set the Url for easy access.
@@ -66,7 +66,7 @@ func createRequest(raw *http.Request) (*Request) {
         Note: this value should never change over the life time of the request.
     */
 
-    req.OriginalUrl = raw.RequestURI
+    req.OriginalUrl = req.Url
 
     /*
         Return the finished stack.Request.
