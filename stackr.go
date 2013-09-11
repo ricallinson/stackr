@@ -204,6 +204,18 @@ func (this *Server) handle(req *Request, res *Response, index int) {
 }
 
 /*
+    Listen for connections when in the Google App Engine.
+*/
+func (this *Server) ListenInAppEngine() {
+
+    /*
+        Map all URLs into this Server.
+    */
+
+    http.Handle("/", createHttpHandler(this))
+}
+
+/*
     Listen for connections on HTTP.
 */
 func (this *Server) Listen(port int) {
@@ -215,7 +227,7 @@ func (this *Server) Listen(port int) {
     address := ":" + fmt.Sprint(port)
 
     /*
-        Start the server.
+        Start the server by mapping all URLs into this Server.
     */
 
     log.Fatal(http.ListenAndServe(address, createHttpHandler(this)))
@@ -233,7 +245,7 @@ func (this *Server) ListenTLS(port int, certFile string, keyFile string) {
     address := ":" + fmt.Sprint(port)
     
     /*
-        Start the server.
+        Start the server by mapping all URLs into this Server.
     */
 
     log.Fatal(http.ListenAndServeTLS(address, certFile, keyFile, createHttpHandler(this)))
