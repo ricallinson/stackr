@@ -7,11 +7,7 @@ import(
 )
 
 /*
-    A HTTP Response.
-
-    .Writer.Header() http.Header
-    .Writer.Write([]byte) (int, error)
-    .Writer.WriteHeader(int)
+    Response represents the response from an HTTP request.
 */
 type Response struct {
 
