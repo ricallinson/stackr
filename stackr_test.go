@@ -153,7 +153,7 @@ func TestStack(t *testing.T) {
         })
 
         It("should return [404] as nothing is matched", func() {
-            req.Http.Method = "HEAD"
+            req.Method = "HEAD"
             app.handle(req, res, 0)
             AssertEqual(res.StatusCode, 404)
         })

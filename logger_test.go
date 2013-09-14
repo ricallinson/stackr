@@ -22,7 +22,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [GET / 200 0ms]", func() {
-            req.Http.Method = "GET"
+            req.Method = "GET"
             test := false
             app.Use("", Logger())
             app.Use("", func(req *Request, res *Response, next func()) {
@@ -34,7 +34,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [GET / 200 0ms] with config object", func() {
-            req.Http.Method = "GET"
+            req.Method = "GET"
             test := ""
             writer := func(a ...interface{}) (int, error) {
                 test = a[0].(string)
@@ -49,7 +49,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [GET / 300 0ms]", func() {
-            req.Http.Method = "GET"
+            req.Method = "GET"
             test := ""
             writer := func(a ...interface{}) (int, error) {
                 test = a[0].(string)
@@ -65,7 +65,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [GET / 400 0ms]", func() {
-            req.Http.Method = "GET"
+            req.Method = "GET"
             test := ""
             writer := func(a ...interface{}) (int, error) {
                 test = a[0].(string)
@@ -81,7 +81,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [GET / 500 0ms]", func() {
-            req.Http.Method = "GET"
+            req.Method = "GET"
             test := ""
             writer := func(a ...interface{}) (int, error) {
                 test = a[0].(string)
@@ -97,7 +97,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [GET / 500 0ms - 100]", func() {
-            req.Http.Method = "GET"
+            req.Method = "GET"
             test := ""
             writer := func(a ...interface{}) (int, error) {
                 test = a[0].(string)
@@ -114,7 +114,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [GET - 200]", func() {
-            req.Http.Method = "GET"
+            req.Method = "GET"
             test := ""
             writer := func(a ...interface{}) (int, error) {
                 test = a[0].(string)
@@ -155,7 +155,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [HTTP/1.1] from :http-version]", func() {
-            req.Http.Proto = "HTTP/1.1"
+            req.Proto = "HTTP/1.1"
             result := loggerFormatFunctions[":http-version"](opt, req, res)
             AssertEqual(result, "HTTP/1.1")
         })
@@ -170,7 +170,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [foo] from :remote-addr]", func() {
-            req.Http.RemoteAddr = "foo"
+            req.RemoteAddr = "foo"
             result := loggerFormatFunctions[":remote-addr"](opt, req, res)
             AssertEqual(result, "foo")
         })
@@ -181,7 +181,7 @@ func TestLogger(t *testing.T) {
         })
 
         It("should return [GET] from :method]", func() {
-            req.Http.Method = "GET"
+            req.Method = "GET"
             result := loggerFormatFunctions[":method"](opt, req, res)
             AssertEqual(result, "GET")
         })
