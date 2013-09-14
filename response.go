@@ -14,9 +14,17 @@ import(
     .Writer.WriteHeader(int)
 */
 type Response struct {
+
+    // The standard http.ResponseWriter interface.
     Writer http.ResponseWriter
+
+    // Ture if headers have been sent.
     HeaderSent bool
+
+    // The HTTP status code to be return.
     StatusCode int
+
+    // Ture if .End() has been called.
     Closed bool
 }
 
@@ -30,19 +38,7 @@ func createResponse(writer http.ResponseWriter) (*Response) {
         Create a new Response.
     */
 
-    this := new(Response)
-
-    /*
-        Set the source http.ResponseWriter so it can be accessed later.
-    */
-
-    this.Writer = writer
-
-    /*
-        Set a default status code.
-    */
-
-    this.StatusCode = 200
+    this := &Response{writer, false, 200, false}
 
     /*
         Return the finished stack.Response.
