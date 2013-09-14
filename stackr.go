@@ -204,15 +204,16 @@ func (this *Server) handle(req *Request, res *Response, index int) {
 }
 
 /*
-    Listen for connections when in the Google App Engine.
+    Handles http requests and routes them to .handle().
 */
-func (this *Server) ListenInAppEngine() {
+func (this *Server) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
     /*
-        Map all URLs into this Server.
+        Pass the res and req into there repective create functions.
+        The results of these are then passed to stack.server.handle().
     */
 
-    http.Handle("/", createHttpHandler(this))
+    this.handle(createRequest(req), createResponse(res), 0)
 }
 
 /*
@@ -230,7 +231,7 @@ func (this *Server) Listen(port int) {
         Start the server by mapping all URLs into this Server.
     */
 
-    log.Fatal(http.ListenAndServe(address, createHttpHandler(this)))
+    log.Fatal(http.ListenAndServe(address, this))
 }
 
 /*
@@ -248,5 +249,5 @@ func (this *Server) ListenTLS(port int, certFile string, keyFile string) {
         Start the server by mapping all URLs into this Server.
     */
 
-    log.Fatal(http.ListenAndServeTLS(address, certFile, keyFile, createHttpHandler(this)))
+    log.Fatal(http.ListenAndServeTLS(address, certFile, keyFile, this))
 }
