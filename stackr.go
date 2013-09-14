@@ -204,7 +204,7 @@ func (this *Server) handle(req *Request, res *Response, index int) {
 }
 
 /*
-    Handles http requests and routes them to .handle().
+    ServeHTTP calls .handle(req, res).
 */
 func (this *Server) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
