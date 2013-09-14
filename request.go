@@ -5,32 +5,22 @@ import(
 )
 
 /*
-    A HTTP Request.
-
-    Access to the http.Request attributes is possible.
-
-    .Method string
-    .Proto string
-    .ProtoMajor int
-    .ProtoMinor int
-    .Header http.Header
-    .Body io.ReadCloser
-    .ContentLength int64
-    .TransferEncoding []string
-    .Close bool
-    .Host string
-    .Form url.Values
-    .PostForm url.Values
-    .MultipartForm *multipart.Form
-    .Trailer http.Header
-    .RemoteAddr string
-    .RequestURI string
-    .TLS *tls.ConnectionState
+    A Request represents an HTTP request received by the server.
 */
 type Request struct {
+
+    // The standard http.Request type
     *http.Request
+
+    // The value of .URL.RequestURI() for easy access.
+    // Note: this value may be changed by the Stackr.handle() function.
     Url string
+
+    // Set to the vlue of the matched portion of the .URL.RequestURI()
     MatchedUrl string
+
+    // The value of .URL.RequestURI() for easy access.
+    // Note: this value should NEVER be changed.
     OriginalUrl string
 }
 
@@ -44,29 +34,7 @@ func createRequest(raw *http.Request) (*Request) {
         Create a new Request.
     */
 
-    req := &Request{raw, "", "", ""}
-
-    /*
-        Set the source http.Request so it can be accessed later.
-    */
-
-    // req. = raw
-
-    /*
-        Set the Url for easy access.
-
-        Note: this value may be changed by the stack.handle() function.
-    */
-
-    req.Url = raw.URL.RequestURI()
-
-    /*
-        Set the Url for easy access.
-
-        Note: this value should never change over the life time of the request.
-    */
-
-    req.OriginalUrl = req.Url
+    req := &Request{raw, raw.URL.RequestURI(), "", raw.URL.RequestURI()}
 
     /*
         Return the finished stack.Request.
