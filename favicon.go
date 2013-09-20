@@ -101,7 +101,7 @@ func Favicon(o ...OptFav) (func(req *Request, res *Response, next func())) {
     }
 
     /*
-        The handler function returned to Use().
+        The Handler function returned to Use().
     */
 
     return func(req *Request, res *Response, next func()) {

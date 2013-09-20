@@ -16,7 +16,7 @@ func BenchmarkMatchOneHandle(b *testing.B) {
     b.ResetTimer()
 
     for i := 0; i < b.N; i++ {
-        app.handle(req, res, 0)
+        app.Handle(req, res, 0)
     }
 }
 
@@ -34,7 +34,7 @@ func BenchmarkMatchTenHandles(b *testing.B) {
     b.ResetTimer()
 
     for i := 0; i < b.N; i++ {
-        app.handle(req, res, 0)
+        app.Handle(req, res, 0)
     }
 }
 
@@ -52,7 +52,7 @@ func BenchmarkMatchFiftyHandles(b *testing.B) {
     b.ResetTimer()
 
     for i := 0; i < b.N; i++ {
-        app.handle(req, res, 0)
+        app.Handle(req, res, 0)
     }
 }
 
@@ -70,6 +70,6 @@ func BenchmarkMatchThousandHandles(b *testing.B) {
     b.ResetTimer()
 
     for i := 0; i < b.N; i++ {
-        app.handle(req, res, 0)
+        app.Handle(req, res, 0)
     }
 }

@@ -83,7 +83,7 @@ func Static(o ...OptStatic) (func(req *Request, res *Response, next func())) {
     fileServer := http.FileServer(http.Dir(root))
 
     /*
-        Return the handle function.
+        Return the Handle function.
     */
 
     return func(req *Request, res *Response, next func()) {

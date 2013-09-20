@@ -13,7 +13,7 @@ type Request struct {
     *http.Request
 
     // The value of .URL.RequestURI() for easy access.
-    // Note: this value may be changed by the Stackr.handle() function.
+    // Note: this value may be changed by the Stackr.Handle() function.
     Url string
 
     // Set to the vlue of the matched portion of the .URL.RequestURI()

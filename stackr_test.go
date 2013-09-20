@@ -45,7 +45,7 @@ func TestStack(t *testing.T) {
         })
     })
 
-    Describe("handle()", func() {
+    Describe("Handle()", func() {
 
         var app *Server
         var req *Request
@@ -62,7 +62,7 @@ func TestStack(t *testing.T) {
             app.Use("/", func(req *Request, res *Response, next func()) {
                 test = true
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, true)
         })
 
@@ -71,7 +71,7 @@ func TestStack(t *testing.T) {
             app.Use("/foo", func(req *Request, res *Response, next func()) {
                 test = true
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, false)
         })
 
@@ -81,7 +81,7 @@ func TestStack(t *testing.T) {
             app.Use("/foo", func(req *Request, res *Response, next func()) {
                 test = true
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, true)
         })
 
@@ -91,7 +91,7 @@ func TestStack(t *testing.T) {
             app.Use("/foo", func(req *Request, res *Response, next func()) {
                 test = true
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, true)
         })
 
@@ -101,7 +101,7 @@ func TestStack(t *testing.T) {
             app.Use("/foo/bar", func(req *Request, res *Response, next func()) {
                 test = true
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, true)
         })
 
@@ -111,7 +111,7 @@ func TestStack(t *testing.T) {
             app.Use("/foo/bar/", func(req *Request, res *Response, next func()) {
                 test = true
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, true)
         })
 
@@ -121,7 +121,7 @@ func TestStack(t *testing.T) {
             app.Use("/foo/bar//", func(req *Request, res *Response, next func()) {
                 test = true
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, false)
         })
 
@@ -134,7 +134,7 @@ func TestStack(t *testing.T) {
             app.Use("/foo", func(req *Request, res *Response, next func()) {
                 test++
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, 2)
         })
 
@@ -148,13 +148,13 @@ func TestStack(t *testing.T) {
             app.Use("/foo", func(req *Request, res *Response, next func()) {
                 test++
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, 1)
         })
 
         It("should return [404] as nothing is matched", func() {
             req.Method = "HEAD"
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(res.StatusCode, 404)
         })
 
@@ -164,11 +164,11 @@ func TestStack(t *testing.T) {
                 res.Write("foo")
                 test = true
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, true)
         })
 
-        It("should return [firstsecond] after calling next() in route handler", func() {
+        It("should return [firstsecond] after calling next() in route Handler", func() {
             test := ""
             app.Use("/", func(req *Request, res *Response, next func()) {
                 next()
@@ -177,7 +177,7 @@ func TestStack(t *testing.T) {
             app.Use("/", func(req *Request, res *Response, next func()) {
                 test += "first"
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, "firstsecond")
         })
 
@@ -187,7 +187,7 @@ func TestStack(t *testing.T) {
             app.Use("/", func(req *Request, res *Response, next func()) {
                 test = res.Write("foo")
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, false)
         })
 
@@ -199,7 +199,7 @@ func TestStack(t *testing.T) {
             app.Use("/", func(req *Request, res *Response, next func()) {
                 test = res.SetHeader("key", "val")
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, false)
         })
     })

@@ -207,7 +207,7 @@ func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
     immediate := opt.Immediate
 
     /*
-        Return the handler function.
+        Return the Handler function.
     */
 
     return func(req *Request, res *Response, next func()) {

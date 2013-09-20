@@ -29,7 +29,7 @@ func TestLogger(t *testing.T) {
                 res.End("")
                 test = true
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, true)
         })
 
@@ -44,7 +44,7 @@ func TestLogger(t *testing.T) {
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.End("")
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, "\x1b[90mGET / \x1b[32m200 \x1b[90m0ms\x1b[0m")
         })
 
@@ -60,7 +60,7 @@ func TestLogger(t *testing.T) {
                 res.StatusCode = 300
                 res.End("")
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, "\x1b[90mGET / \x1b[36m300 \x1b[90m0ms\x1b[0m")
         })
 
@@ -76,7 +76,7 @@ func TestLogger(t *testing.T) {
                 res.StatusCode = 400
                 res.End("")
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, "\x1b[90mGET / \x1b[33m400 \x1b[90m0ms\x1b[0m")
         })
 
@@ -92,7 +92,7 @@ func TestLogger(t *testing.T) {
                 res.StatusCode = 500
                 res.End("")
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, "\x1b[90mGET / \x1b[31m500 \x1b[90m0ms\x1b[0m")
         })
 
@@ -109,7 +109,7 @@ func TestLogger(t *testing.T) {
                 res.SetHeader("content-length", "100")
                 res.End("")
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, "\x1b[90mGET / \x1b[31m500 \x1b[90m0ms - 100\x1b[0m")
         })
 
@@ -126,7 +126,7 @@ func TestLogger(t *testing.T) {
                 res.SetHeader("content-length", "100")
                 res.End("")
             })
-            app.handle(req, res, 0)
+            app.Handle(req, res, 0)
             AssertEqual(test, "GET - 500 - 100")
         })
     })
