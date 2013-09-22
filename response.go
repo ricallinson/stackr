@@ -85,6 +85,13 @@ func (this *Response) SetHeader(key string, value string) (bool) {
 }
 
 /*
+    Remove the named header.
+*/
+func (this *Response) RemoveHeader(key string) {
+    this.Writer.Header().Del(key)
+}
+
+/*
     Write any headers set to the client.
 */
 
