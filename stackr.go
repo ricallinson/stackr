@@ -48,7 +48,7 @@ func CreateServer() (*Server) {
 }
 
 /*
-    Utilize the given middleware `handle` to the given `route`,
+    Utilize the given middleware `Handle` to the given `route`,
     defaulting to _/_. This "route" is the mount-point for the
     middleware, when given a value other than _/_ the middleware
     is only effective when that segment is present in the request's
@@ -74,7 +74,7 @@ func CreateServer() (*Server) {
 
         stackr.CreateServer().Use(stackr.Favicon()).Listen(3000);
 */ 
-func (this *Server) Use(route string, handle func(*Request, *Response, func())) (*Server) {
+func (this *Server) Use(route string, Handle func(*Request, *Response, func())) (*Server) {
 
     /*
         If the route is empty make it "/".
@@ -98,7 +98,7 @@ func (this *Server) Use(route string, handle func(*Request, *Response, func())) 
 
     this.stack = append(this.stack, middleware{
         Route: strings.ToLower(route),
-        Handle: handle,
+        Handle: Handle,
     })
 
     /*
@@ -114,7 +114,7 @@ func (this *Server) Use(route string, handle func(*Request, *Response, func())) 
 
     Note: this is a recursive function.
 */
-func (this *Server) handle(req *Request, res *Response, index int) {
+func (this *Server) Handle(req *Request, res *Response, index int) {
 
     /*
         If the response has been closed return.
@@ -165,7 +165,7 @@ func (this *Server) handle(req *Request, res *Response, index int) {
     }
 
     /*
-        Otherwise call the layer handler.
+        Otherwise call the layer Handler.
     */
 
     if strings.Contains(strings.ToLower(req.OriginalUrl), layer.Route) {
@@ -192,7 +192,7 @@ func (this *Server) handle(req *Request, res *Response, index int) {
                 The value of next is a function that calls this function again, passing the index value.
             */
 
-            this.handle(req, res, index)
+            this.Handle(req, res, index)
         })
     }
 
@@ -200,20 +200,20 @@ func (this *Server) handle(req *Request, res *Response, index int) {
         Call this function again, passing the index value.
     */
 
-    this.handle(req, res, index)
+    this.Handle(req, res, index)
 }
 
 /*
-    ServeHTTP calls .handle(req, res).
+    ServeHTTP calls .Handle(req, res).
 */
 func (this *Server) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
     /*
         Pass the res and req into there repective create functions.
-        The results of these are then passed to stack.server.handle().
+        The results of these are then passed to stack.server.Handle().
     */
 
-    this.handle(createRequest(req), createResponse(res), 0)
+    this.Handle(createRequest(req), createResponse(res), 0)
 }
 
 /*
