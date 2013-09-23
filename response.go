@@ -183,11 +183,15 @@ func (this *Response) Write(data string) (bool) {
 */
 func (this *Response) End(data string) (bool) {
 
+    status := true
+
     /*
         Write the data to the client.
     */
 
-    status := this.Write(data)
+    if len(data) > 0 {
+        status = this.Write(data)
+    }
 
     /*
         Set the "Closed" flag to true.
