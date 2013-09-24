@@ -37,14 +37,6 @@ type Request struct {
     // follow this convention as well. This property defaults to {} when bodyParser() is used.
     Files map[string]interface{}
 
-    // When the cookieParser(secret) middleware is not used this object defaults to {}, 
-    // otherwise contains the signed cookies sent by the user-agent, unsigned and ready for use. 
-    // Signed cookies reside in a different object to show developer intent, otherwise a 
-    // malicious attack could be placed on `req.cookie` values which are easy to spoof. 
-    // Note that signing a cookie does not mean it is "hidden" nor encrypted, this simply 
-    // prevents tampering as the secret used to sign is private.
-    SignedCookies map[string]string
-
     // Return an slice of Accepted media types ordered from highest quality to lowest.
     Accepted []string
 
