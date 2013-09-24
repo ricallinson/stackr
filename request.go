@@ -57,6 +57,12 @@ type Request struct {
 
     //
     accepted []string
+
+    //
+    acceptedLanguages []string
+
+    //
+    acceptedCharsets []string
 }
 
 /*
@@ -100,8 +106,11 @@ func (this *Request) Fresh(s int) (bool) {
         return false
     }
 
-    // Tmp for testing
-    return len(this.Header.Get("X-Fresh")) > 0
+    /*
+        Real fresh test goes here.
+    */
+
+    return len(this.Header.Get("X-Fresh")) > 0 // Tmp for testing
 }
 
 /*
@@ -127,12 +136,20 @@ func (this *Request) Accepted() ([]string) {
     Return an slice of Accepted languages ordered from highest quality to lowest.
 */
 func (this *Request) AcceptedLanguages() ([]string) {
-    return []string{}
+    if this.acceptedLanguages == nil {
+        a := this.Header.Get("Accept-Language")
+        this.acceptedLanguages = regexp.MustCompile(" *, *").Split(a, -1)
+    }
+    return this.acceptedLanguages
 }
 
 /*
     Return an slice of Accepted charsets ordered from highest quality to lowest.
 */
 func (this *Request) AcceptedCharsets() ([]string) {
-    return []string{}
+    if this.acceptedCharsets == nil {
+        a := this.Header.Get("Accept-Charset")
+        this.acceptedCharsets = regexp.MustCompile(" *, *").Split(a, -1)
+    }
+    return this.acceptedCharsets
 }
