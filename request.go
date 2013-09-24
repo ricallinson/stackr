@@ -37,11 +37,11 @@ type Request struct {
     // follow this convention as well. This property defaults to {} when bodyParser() is used.
     Files map[string]interface{}
 
-    // When the cookieParser() middleware is used this object defaults to {}, 
+    // When the cookieParser() middleware is not used this object defaults to {}, 
     // otherwise contains the cookies sent by the user-agent.
     Cookies map[string]string
 
-    // When the cookieParser(secret) middleware is used this object defaults to {}, 
+    // When the cookieParser(secret) middleware is not used this object defaults to {}, 
     // otherwise contains the signed cookies sent by the user-agent, unsigned and ready for use. 
     // Signed cookies reside in a different object to show developer intent, otherwise a 
     // malicious attack could be placed on `req.cookie` values which are easy to spoof. 
@@ -98,48 +98,75 @@ type Request struct {
 
 func createRequest(raw *http.Request) (*Request) {
 
+    // Create the Request type.
     this := &Request{
         Request: raw,
         Url: raw.URL.RequestURI(),
         OriginalUrl: raw.URL.RequestURI(),
     }
 
+    // Could be set by middleware.
     if this.Body == nil {
         this.Body = map[string]string{}
     }
 
+    // Could be set by middleware.
     if this.Query == nil {
         this.Query = map[string]string{}
     }
 
+    // Could be set by middleware.
     if this.Files == nil {
         this.Files = map[string]interface{}{}
     }
 
+    // Could be set by middleware.
     if this.Cookies == nil {
         this.Cookies = map[string]string{}
     }
 
+    // Could be set by middleware.
     if this.SignedCookies == nil {
         this.SignedCookies = map[string]string{}
     }
 
-    this.Accepted = []string{}
-
+    // Helpers for standard headers.
+    this.Accepted = this.getAccepted()
     this.Ip = this.RemoteAddr
-    // this.Ips
+    this.Ips = this.getTrustProxy()
     this.Path = this.URL.Path
-    // this.Fresh
-    // this.Stale
-    // this.Xhr
+    this.Fresh = this.getFresh()
+    this.Stale = this.Fresh == false
+    this.Xhr = this.Header.Get("X-Requested-With") == "XMLHttpRequest"
     this.Protocol = this.URL.Scheme
     this.Secure = this.Protocol == "https"
-    // this.AcceptedLanguages
-    // this.AcceptedCharsets
+    this.AcceptedLanguages = this.getAcceptedLanguages()
+    this.AcceptedCharsets = this.getAcceptedCharsets()
 
+    // A map for storing general key/values over the lifetime of the request.
     if this.Map == nil {
         this.Map = map[string]interface{}{}
     }
 
     return this
+}
+
+func (this *Request) getTrustProxy() ([]string) {
+    return []string{}
+}
+
+func (this *Request) getFresh() (bool) {
+    return false
+}
+
+func (this *Request) getAccepted() ([]string) {
+    return []string{}
+}
+
+func (this *Request) getAcceptedLanguages() ([]string) {
+    return []string{}
+}
+
+func (this *Request) getAcceptedCharsets() ([]string) {
+    return []string{}
 }
