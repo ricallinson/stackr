@@ -24,6 +24,10 @@ import(
     "net/http"
 )
 
+const (
+    HALT = "HALT: Not implemented yet!"
+)
+
 /*
     A Stackr Server.
 */

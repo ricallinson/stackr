@@ -39,6 +39,7 @@ type Request struct {
 
     // When the cookieParser() middleware is not used this object defaults to {}, 
     // otherwise contains the cookies sent by the user-agent.
+    // To access the raw cookies use ".Request.Cookies()".
     Cookies map[string]string
 
     // When the cookieParser(secret) middleware is not used this object defaults to {}, 
@@ -103,31 +104,6 @@ func createRequest(raw *http.Request) (*Request) {
         Request: raw,
         Url: raw.URL.RequestURI(),
         OriginalUrl: raw.URL.RequestURI(),
-    }
-
-    // Could be set by middleware.
-    if this.Body == nil {
-        this.Body = map[string]string{}
-    }
-
-    // Could be set by middleware.
-    if this.Query == nil {
-        this.Query = map[string]string{}
-    }
-
-    // Could be set by middleware.
-    if this.Files == nil {
-        this.Files = map[string]interface{}{}
-    }
-
-    // Could be set by middleware.
-    if this.Cookies == nil {
-        this.Cookies = map[string]string{}
-    }
-
-    // Could be set by middleware.
-    if this.SignedCookies == nil {
-        this.SignedCookies = map[string]string{}
     }
 
     // Helpers for standard headers.
