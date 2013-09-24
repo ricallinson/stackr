@@ -37,11 +37,6 @@ type Request struct {
     // follow this convention as well. This property defaults to {} when bodyParser() is used.
     Files map[string]interface{}
 
-    // When the cookieParser() middleware is not used this object defaults to {}, 
-    // otherwise contains the cookies sent by the user-agent.
-    // To access the raw cookies use ".Request.Cookies()".
-    Cookies map[string]string
-
     // When the cookieParser(secret) middleware is not used this object defaults to {}, 
     // otherwise contains the signed cookies sent by the user-agent, unsigned and ready for use. 
     // Signed cookies reside in a different object to show developer intent, otherwise a 
