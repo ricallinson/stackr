@@ -1,6 +1,7 @@
 package stackr
 
 import(
+    "regexp"
     "net/http"
 )
 
@@ -37,27 +38,8 @@ type Request struct {
     // follow this convention as well. This property defaults to {} when bodyParser() is used.
     Files map[string]interface{}
 
-    // Return an slice of Accepted media types ordered from highest quality to lowest.
-    Accepted []string
-
-    // Return the remote address, or when "trust proxy" is enabled - the upstream address.
-    Ip string
-
-    // When "trust proxy" is `true`, parse the "X-Forwarded-For" ip address list and return a slice, 
-    // otherwise an empty slice is returned. For example if the value were "client, proxy1, proxy2" 
-    // you would receive the slice {"client", "proxy1", "proxy2"} where "proxy2" is the furthest down-stream.
-    Ips []string
-
     // Returns the request URL pathname.
     Path string
-
-    // Check if the request is fresh - aka Last-Modified and/or the ETag still match, 
-    // indicating that the resource is "fresh".
-    Fresh bool
-
-    // Check if the request is stale - aka Last-Modified and/or the ETag do not match, 
-    // indicating that the resource is "stale".
-    Stale bool
 
     // Check if the request was issued with the "X-Requested-With" header field set to "XMLHttpRequest" (jQuery etc).
     Xhr bool
@@ -70,14 +52,11 @@ type Request struct {
     // Check if a TLS connection is established. This is a short-hand for: "https" == req.Protocol
     Secure bool
 
-    // Return an slice of Accepted languages ordered from highest quality to lowest.
-    AcceptedLanguages []string
-
-    // Return an slice of Accepted charsets ordered from highest quality to lowest.
-    AcceptedCharsets []string
-
     // Holds custom values set by functions in the request flow.
     Map map[string]interface{}
+
+    //
+    accepted []string
 }
 
 /*
@@ -94,17 +73,10 @@ func createRequest(raw *http.Request) (*Request) {
     }
 
     // Helpers for standard headers.
-    this.Accepted = this.getAccepted()
-    this.Ip = this.RemoteAddr
-    this.Ips = this.getTrustProxy()
     this.Path = this.URL.Path
-    this.Fresh = this.getFresh()
-    this.Stale = this.Fresh == false
     this.Xhr = this.Header.Get("X-Requested-With") == "XMLHttpRequest"
     this.Protocol = this.URL.Scheme
     this.Secure = this.Protocol == "https"
-    this.AcceptedLanguages = this.getAcceptedLanguages()
-    this.AcceptedCharsets = this.getAcceptedCharsets()
 
     // A map for storing general key/values over the lifetime of the request.
     if this.Map == nil {
@@ -114,22 +86,53 @@ func createRequest(raw *http.Request) (*Request) {
     return this
 }
 
-func (this *Request) getTrustProxy() ([]string) {
+/*
+    Check if the request is fresh - aka Last-Modified and/or the ETag still match, 
+    indicating that the resource is "fresh".
+*/
+func (this *Request) Fresh(s int) (bool) {
+
+    if m := this.Method; m != "GET" && m != "HEAD" {
+        return false
+    }
+
+    if (s >= 200 && s < 300) || 304 == s {
+        return false
+    }
+
+    // Tmp for testing
+    return len(this.Header.Get("X-Fresh")) > 0
+}
+
+/*
+    Check if the request is stale - aka Last-Modified and/or the ETag do not match, 
+    indicating that the resource is "stale".
+*/
+func (this *Request) Stale(s int) (bool) {
+    return this.Fresh(s) == false
+}
+
+/*
+    Return an slice of Accepted media types ordered from highest quality to lowest.
+*/
+func (this *Request) Accepted() ([]string) {
+    if this.accepted == nil {
+        a := this.Header.Get("Accept")
+        this.accepted = regexp.MustCompile(" *, *").Split(a, -1)
+    }
+    return this.accepted
+}
+
+/*
+    Return an slice of Accepted languages ordered from highest quality to lowest.
+*/
+func (this *Request) AcceptedLanguages() ([]string) {
     return []string{}
 }
 
-func (this *Request) getFresh() (bool) {
-    return false
-}
-
-func (this *Request) getAccepted() ([]string) {
-    return []string{}
-}
-
-func (this *Request) getAcceptedLanguages() ([]string) {
-    return []string{}
-}
-
-func (this *Request) getAcceptedCharsets() ([]string) {
+/*
+    Return an slice of Accepted charsets ordered from highest quality to lowest.
+*/
+func (this *Request) AcceptedCharsets() ([]string) {
     return []string{}
 }
