@@ -127,7 +127,7 @@ func (this *Request) Stale(s int) (bool) {
 func (this *Request) Accepted() ([]string) {
     if this.accepted == nil {
         a := this.Header.Get("Accept")
-        this.accepted = regexp.MustCompile(" *, *").Split(a, -1)
+        this.accepted = this.processAccepted(a)
     }
     return this.accepted
 }
@@ -138,7 +138,7 @@ func (this *Request) Accepted() ([]string) {
 func (this *Request) AcceptedLanguages() ([]string) {
     if this.acceptedLanguages == nil {
         a := this.Header.Get("Accept-Language")
-        this.acceptedLanguages = regexp.MustCompile(" *, *").Split(a, -1)
+        this.acceptedLanguages = this.processAccepted(a)
     }
     return this.acceptedLanguages
 }
@@ -149,7 +149,15 @@ func (this *Request) AcceptedLanguages() ([]string) {
 func (this *Request) AcceptedCharsets() ([]string) {
     if this.acceptedCharsets == nil {
         a := this.Header.Get("Accept-Charset")
-        this.acceptedCharsets = regexp.MustCompile(" *, *").Split(a, -1)
+        this.acceptedCharsets = this.processAccepted(a)
     }
     return this.acceptedCharsets
+}
+
+/*
+    WARNING: Not complete!
+    Return an slice of "accepted" ordered from highest quality to lowest.
+*/
+func (this *Request) processAccepted(a string) ([]string) {
+    return regexp.MustCompile(" *, *").Split(a, -1)
 }
