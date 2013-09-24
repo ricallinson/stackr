@@ -93,6 +93,7 @@ func createRequest(raw *http.Request) (*Request) {
 }
 
 /*
+    WARNING: Not complete!
     Check if the request is fresh - aka Last-Modified and/or the ETag still match, 
     indicating that the resource is "fresh".
 */
