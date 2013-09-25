@@ -1,8 +1,8 @@
 package stackr
 
 import(
-    "regexp"
     "net/http"
+    "github.com/ricallinson/httphelp/autoneg"
 )
 
 /*
@@ -156,9 +156,15 @@ func (this *Request) AcceptedCharsets() ([]string) {
 }
 
 /*
-    WARNING: Not complete!
     Return an slice of "accepted" ordered from highest quality to lowest.
 */
-func (this *Request) processAccepted(a string) ([]string) {
-    return regexp.MustCompile(" *, *").Split(a, -1)
+func (this *Request) processAccepted(a string) (list []string) {
+    for _, accept := range autoneg.ParseAccept(a) {
+        if len(accept.SubType) > 0 {
+            list = append(list, accept.Type + "/" + accept.SubType)
+        } else {
+            list = append(list, accept.Type)
+        }
+    }
+    return
 }

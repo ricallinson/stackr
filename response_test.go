@@ -62,5 +62,17 @@ func TestResponse(t *testing.T) {
         })
     })
 
+    Describe("Response.RemoveHeader()", func() {
+
+        res := createResponse(NewMockResponseWriter(false))
+
+        It("should return [value1] from setting the headers", func() {
+            res.SetHeader("foo", "bar")
+            AssertEqual(res.Writer.Header().Get("foo"), "bar")
+            res.RemoveHeader("foo")
+            AssertEqual(res.Writer.Header().Get("foo"), "")
+        })
+    })
+
     Report(t)
 }
