@@ -2,7 +2,6 @@ package stackr
 
 import(
     "fmt"
-    // "strings"
     "net/http"
 )
 

@@ -2,7 +2,7 @@ package stackr
 
 import(
     "net/http"
-    "github.com/ricallinson/httphelp/autoneg"
+    "github.com/ricallinson/httphelp"
 )
 
 /*
@@ -159,7 +159,7 @@ func (this *Request) AcceptedCharsets() ([]string) {
     Return an slice of "accepted" ordered from highest quality to lowest.
 */
 func (this *Request) processAccepted(a string) (list []string) {
-    for _, accept := range autoneg.ParseAccept(a) {
+    for _, accept := range httphelp.ParseAccept(a) {
         if len(accept.SubType) > 0 {
             list = append(list, accept.Type + "/" + accept.SubType)
         } else {
