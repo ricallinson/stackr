@@ -18,41 +18,6 @@ func TestRequest(t *testing.T) {
         }
     })
 
-    Describe("Fresh()", func() {
-
-        It("should return [false]", func() {
-            req.Method = "DELETE"
-            a := req.Fresh(100)
-            AssertEqual(a, false)
-        })
-
-        It("should return [false]", func() {
-            req.Method = "GET"
-            a := req.Fresh(100)
-            AssertEqual(a, false)
-        })
-
-        It("should return [false]", func() {
-            req.Method = "GET"
-            a := req.Fresh(200)
-            AssertEqual(a, false)
-        })
-
-        It("should return [false]", func() {
-            req.Method = "HEAD"
-            a := req.Fresh(200)
-            AssertEqual(a, false)
-        })
-    })
-
-    Describe("Stale()", func() {
-
-        It("should return [true]", func() {
-            a := req.Stale(100)
-            AssertEqual(a, true)
-        })
-    })
-
     Describe("Accepted()", func() {
 
         It("should return [application/xml]", func() {
