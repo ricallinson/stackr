@@ -2,7 +2,6 @@ package stackr
 
 import(
     "net/http"
-    "github.com/ricallinson/httphelp"
 )
 
 /*
@@ -40,15 +39,6 @@ type Request struct {
 
     // Holds custom values set by functions in the request flow.
     Map map[string]interface{}
-
-    //
-    accepted []string
-
-    //
-    acceptedLanguages []string
-
-    //
-    acceptedCharsets []string
 }
 
 /*
@@ -70,51 +60,4 @@ func createRequest(raw *http.Request) (*Request) {
     }
 
     return this
-}
-
-/*
-    Return an slice of Accepted media types ordered from highest quality to lowest.
-*/
-func (this *Request) Accepted() ([]string) {
-    if this.accepted == nil {
-        a := this.Header.Get("Accept")
-        this.accepted = this.processAccepted(a)
-    }
-    return this.accepted
-}
-
-/*
-    Return an slice of Accepted languages ordered from highest quality to lowest.
-*/
-func (this *Request) AcceptedLanguages() ([]string) {
-    if this.acceptedLanguages == nil {
-        a := this.Header.Get("Accept-Language")
-        this.acceptedLanguages = this.processAccepted(a)
-    }
-    return this.acceptedLanguages
-}
-
-/*
-    Return an slice of Accepted charsets ordered from highest quality to lowest.
-*/
-func (this *Request) AcceptedCharsets() ([]string) {
-    if this.acceptedCharsets == nil {
-        a := this.Header.Get("Accept-Charset")
-        this.acceptedCharsets = this.processAccepted(a)
-    }
-    return this.acceptedCharsets
-}
-
-/*
-    Return an slice of "accepted" ordered from highest quality to lowest.
-*/
-func (this *Request) processAccepted(a string) (list []string) {
-    for _, accept := range httphelp.ParseAccept(a) {
-        if len(accept.SubType) > 0 {
-            list = append(list, accept.Type + "/" + accept.SubType)
-        } else {
-            list = append(list, accept.Type)
-        }
-    }
-    return
 }
