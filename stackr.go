@@ -65,9 +65,9 @@ func CreateServer() (*Server) {
     Examples:
 
         var app = stackr.CreateServer();
-        app.Use("/", stackr.Favicon())
-        app.Use("/", stackr.Logger())
-        app.Use("/", stackr.Static())
+        app.Use(stackr.Favicon())
+        app.Use(stackr.Logger())
+        app.Use("/public", stackr.Static())
 
     If we wanted to prefix static files with _/public_, we could
     "mount" the `Static()` middleware:
@@ -78,7 +78,21 @@ func CreateServer() (*Server) {
 
         stackr.CreateServer().Use(stackr.Favicon()).Listen(3000);
 */ 
-func (this *Server) Use(route string, Handle func(*Request, *Response, func())) (*Server) {
+func (this *Server) Use(in ...interface{}) (*Server) {
+
+    var route string
+    var handle func(*Request, *Response, func())
+
+    for _, i := range in {
+        switch i.(type) {
+        case string:
+            route = i.(string)
+        case func(*Request, *Response, func()):
+            handle = i.(func(*Request, *Response, func()))
+        default:
+            panic("stackr: Go home handler, you're drunk!")
+        }
+    }
 
     /*
         If the route is empty make it "/".
@@ -102,7 +116,7 @@ func (this *Server) Use(route string, Handle func(*Request, *Response, func())) 
 
     this.stack = append(this.stack, middleware{
         Route: strings.ToLower(route),
-        Handle: Handle,
+        Handle: handle,
     })
 
     /*

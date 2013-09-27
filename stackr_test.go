@@ -16,7 +16,7 @@ func TestStack(t *testing.T) {
         })
 
         It("should return [1]", func() {
-            app.Use("/", func(req *Request, res *Response, next func()) {})
+            app.Use(func(req *Request, res *Response, next func()) {})
             AssertEqual(len(app.stack), 1)
         })
 
