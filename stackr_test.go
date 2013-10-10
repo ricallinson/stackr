@@ -181,6 +181,20 @@ func TestStack(t *testing.T) {
             AssertEqual(test, "firstsecond")
         })
 
+        It("should return [first] after calling next() in route Handler", func() {
+            test := ""
+            app.Use("/bar", func(req *Request, res *Response, next func()) {
+                next()
+                test += "second"
+            })
+            app.Use("/", func(req *Request, res *Response, next func()) {
+                test += "first"
+            })
+            req.OriginalUrl = "/foo"
+            app.Handle(req, res, 0)
+            AssertEqual(test, "first")
+        })
+
         It("should return [false] as the writer throws an error", func() {
             test := true
             res = createResponse(NewMockResponseWriter(true))

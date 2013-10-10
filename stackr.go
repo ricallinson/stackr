@@ -186,7 +186,7 @@ func (this *Server) Handle(req *Request, res *Response, index int) {
         Otherwise call the layer Handler.
     */
 
-    if strings.Contains(strings.ToLower(req.OriginalUrl), layer.Route) {
+    if strings.Contains(req.OriginalUrl, layer.Route) {
 
         /*
             Set the value of Url to the portion after the matched layer.Route
