@@ -74,7 +74,11 @@ func (this *Response) SetHeader(key string, value string) (bool) {
         Message headers are case-insensitive.
     */
 
-    this.Writer.Header().Set(key, value)
+    if len(value) > 0 {
+        this.Writer.Header().Set(key, value)
+    } else {
+        this.Writer.Header().Del(key)
+    }
 
     /*
         The header was set so return true.
