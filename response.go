@@ -1,236 +1,236 @@
 package stackr
 
-import(
-    "fmt"
-    "net/http"
+import (
+	"fmt"
+	"net/http"
 )
 
 /*
-    Response represents the response from an HTTP request.
+   Response represents the response from an HTTP request.
 */
 type Response struct {
 
-    // The standard http.ResponseWriter interface.
-    Writer http.ResponseWriter
+	// The standard http.ResponseWriter interface.
+	Writer http.ResponseWriter
 
-    // Ture if headers have been sent.
-    HeaderSent bool
+	// Ture if headers have been sent.
+	HeaderSent bool
 
-    // The HTTP status code to be return.
-    StatusCode int
+	// The HTTP status code to be return.
+	StatusCode int
 
-    // Ture if .End() has been called.
-    Closed bool
+	// Ture if .End() has been called.
+	Closed bool
 
-    // Events
-    events map[string][]func()
+	// Events
+	events map[string][]func()
 }
 
 /*
-    Returns a new HTTP Response.
+   Returns a new HTTP Response.
 */
 
-func createResponse(writer http.ResponseWriter) (*Response) {
+func createResponse(writer http.ResponseWriter) *Response {
 
-    /*
-        Create a new Response.
-    */
+	/*
+	   Create a new Response.
+	*/
 
-    this := &Response{writer, false, 200, false, map[string][]func(){}}
+	this := &Response{writer, false, 200, false, map[string][]func(){}}
 
-    /*
-        Return the finished stack.Response.
-    */
+	/*
+	   Return the finished stack.Response.
+	*/
 
-    return this
+	return this
 }
 
 /*
-    Register a listener function for an event.
+   Register a listener function for an event.
 */
 func (this *Response) On(event string, fn func()) {
-    this.events[event] = append(this.events[event], fn)
+	this.events[event] = append(this.events[event], fn)
 }
 
 /*
-    Fire an event calling all registered listeners.
+   Fire an event calling all registered listeners.
 */
 func (this *Response) Fire(event string) {
-    e, ok := this.events[event]
-    if ok {
-        for _, fn := range e {
-            fn()
-        }
-    }
+	e, ok := this.events[event]
+	if ok {
+		for _, fn := range e {
+			fn()
+		}
+	}
 }
 
 /*
-    Set a map of headers, calls SetHeader() for each item.
+   Set a map of headers, calls SetHeader() for each item.
 */
-func (this *Response) SetHeaders(headers map[string]string) (bool) {
-    for key, value := range headers {
-        if this.SetHeader(key, value) == false {
-            return false
-        }
-    }
-    return true
+func (this *Response) SetHeaders(headers map[string]string) bool {
+	for key, value := range headers {
+		if this.SetHeader(key, value) == false {
+			return false
+		}
+	}
+	return true
 }
 
 /*
-    Set a single header.
+   Set a single header.
 
-    Note: all keys are converted to lower case.
+   Note: all keys are converted to lower case.
 */
-func (this *Response) SetHeader(key string, value string) (bool) {
+func (this *Response) SetHeader(key string, value string) bool {
 
-    /*
-        If the headers have been sent nothing can be done so return false.
-    */
+	/*
+	   If the headers have been sent nothing can be done so return false.
+	*/
 
-    if this.HeaderSent == true {
-        return false
-    }
+	if this.HeaderSent == true {
+		return false
+	}
 
-    /*
-        http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
-        Message headers are case-insensitive.
-    */
+	/*
+	   http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+	   Message headers are case-insensitive.
+	*/
 
-    if len(value) > 0 {
-        this.Writer.Header().Set(key, value)
-    }
+	if len(value) > 0 {
+		this.Writer.Header().Set(key, value)
+	}
 
-    /*
-        The header was set so return true.
-    */
+	/*
+	   The header was set so return true.
+	*/
 
-    return true
+	return true
 }
 
 /*
-    Remove the named header.
+   Remove the named header.
 */
 func (this *Response) RemoveHeader(key string) {
-    this.Writer.Header().Del(key)
+	this.Writer.Header().Del(key)
 }
 
 /*
-    Write any headers set to the client.
+   Write any headers set to the client.
 */
 
 func (this *Response) writeHeaders() {
 
-    /*
-        Fire an event.
-    */
+	/*
+	   Fire an event.
+	*/
 
-    this.Fire("header")
+	this.Fire("header")
 
-    /*
-        Set the HeaderSent flag to true.
-    */
+	/*
+	   Set the HeaderSent flag to true.
+	*/
 
-    this.HeaderSent = true
+	this.HeaderSent = true
 
-    /*
-        Write the headers with the current StatusCode.
-    */
+	/*
+	   Write the headers with the current StatusCode.
+	*/
 
-    this.Writer.WriteHeader(this.StatusCode);
+	this.Writer.WriteHeader(this.StatusCode)
 }
 
 /*
-    Write bytes to the client.
+   Write bytes to the client.
 */
-func (this *Response) WriteBytes(data []byte) (bool) {
+func (this *Response) WriteBytes(data []byte) bool {
 
-    /*
-        If headers have not been sent call writeHeaders().
-    */
+	/*
+	   If headers have not been sent call writeHeaders().
+	*/
 
-    if this.HeaderSent == false {
-        this.writeHeaders()
-    }
+	if this.HeaderSent == false {
+		this.writeHeaders()
+	}
 
-    /*
-        Try and write the byte array to the client.
-    */
+	/*
+	   Try and write the byte array to the client.
+	*/
 
-    writen, err := this.Writer.Write(data)
+	writen, err := this.Writer.Write(data)
 
-    /*
-        If there was an error return false.
-    */
+	/*
+	   If there was an error return false.
+	*/
 
-    if err != nil {
-        return false
-    }
+	if err != nil {
+		return false
+	}
 
-    /*
-        Return true if the number of bytes written matches the data length.
-    */
+	/*
+	   Return true if the number of bytes written matches the data length.
+	*/
 
-    return writen == len(data)
+	return writen == len(data)
 }
 
 /*
-    Write data to the client.
+   Write data to the client.
 */
-func (this *Response) Write(data string) (bool) {
+func (this *Response) Write(data string) bool {
 
-    /*
-        If headers have not been sent call writeHeaders().
-    */
+	/*
+	   If headers have not been sent call writeHeaders().
+	*/
 
-    if this.HeaderSent == false {
-        this.writeHeaders()
-    }
+	if this.HeaderSent == false {
+		this.writeHeaders()
+	}
 
-    /*
-        Try and write the string to the client.
-    */
+	/*
+	   Try and write the string to the client.
+	*/
 
-    writen, err := fmt.Fprint(this.Writer, data)
+	writen, err := fmt.Fprint(this.Writer, data)
 
-    /*
-        If there was an error return false.
-    */
+	/*
+	   If there was an error return false.
+	*/
 
-    if err != nil {
-        return false
-    }
+	if err != nil {
+		return false
+	}
 
-    /*
-        Return true if the number of bytes written matches the data length.
-    */
+	/*
+	   Return true if the number of bytes written matches the data length.
+	*/
 
-    return writen == len(data)
+	return writen == len(data)
 }
 
 /*
-    Close the connection to the client.
+   Close the connection to the client.
 */
-func (this *Response) End(data string) (bool) {
+func (this *Response) End(data string) bool {
 
-    status := true
+	status := true
 
-    /*
-        Write the data to the client.
-    */
+	/*
+	   Write the data to the client.
+	*/
 
-    if len(data) > 0 {
-        status = this.Write(data)
-    }
+	if len(data) > 0 {
+		status = this.Write(data)
+	}
 
-    /*
-        Set the "Closed" flag to true.
-    */
+	/*
+	   Set the "Closed" flag to true.
+	*/
 
-    this.Closed = true
+	this.Closed = true
 
-    /*
-        Return the status of the write operation.
-    */
+	/*
+	   Return the status of the write operation.
+	*/
 
-    return status
+	return status
 }

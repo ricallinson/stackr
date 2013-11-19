@@ -1,164 +1,164 @@
 package stackr
 
-import(
-    "io"
-    "fmt"
-    "strconv"
-    "io/ioutil"
-    "crypto/md5"
+import (
+	"crypto/md5"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"strconv"
 )
 
 /*
-    The options for the favicon middleware.
+   The options for the favicon middleware.
 */
 type faviconOpt struct {
-    Path string
-    MaxAge int
+	Path   string
+	MaxAge int
 }
 
 /*
-    Favicon:
+   Favicon:
 
-    By default serves the stackr favicon, or the favicon located by the given `path`.
+   By default serves the stackr favicon, or the favicon located by the given `path`.
 
-    Options:
+   Options:
 
-        * `MaxAge` cache-control max-age directive, defaulting to 1 day
+       * `MaxAge` cache-control max-age directive, defaulting to 1 day
 
-    Examples:
+   Examples:
 
-        Serve default favicon:
+       Serve default favicon:
 
-        stackr.CreateServer().Use(stackr.Favicon())
-        stackr.CreateServer().Use(stackr.Favicon(map[string]string{"maxage": "1000"}))
+       stackr.CreateServer().Use(stackr.Favicon())
+       stackr.CreateServer().Use(stackr.Favicon(map[string]string{"maxage": "1000"}))
 
-    Serve favicon before logging for brevity:
+   Serve favicon before logging for brevity:
 
-        app := stackr.CreateServer()
-        app.Use(stackr.Favicon())
-        app.Use(stackr.Logger())
+       app := stackr.CreateServer()
+       app.Use(stackr.Favicon())
+       app.Use(stackr.Logger())
 
-    Serve custom favicon:
+   Serve custom favicon:
 
-        stackr.CreateServer().Use(stackr.Favicon(map[string]string{"path": "./public/favicon.ico"}))
- */
-func Favicon(o ...map[string]string) (func(req *Request, res *Response, next func())) {
+       stackr.CreateServer().Use(stackr.Favicon(map[string]string{"path": "./public/favicon.ico"}))
+*/
+func Favicon(o ...map[string]string) func(req *Request, res *Response, next func()) {
 
-    /*
-        If we got options use them.
-    */
+	/*
+	   If we got options use them.
+	*/
 
-    opt := faviconOpt{}
+	opt := faviconOpt{}
 
-    if len(o) == 1 {
-        val := o[0]
-        opt.Path = val["path"]
-        opt.MaxAge, _ = strconv.Atoi(val["maxage"])
-    }
+	if len(o) == 1 {
+		val := o[0]
+		opt.Path = val["path"]
+		opt.MaxAge, _ = strconv.Atoi(val["maxage"])
+	}
 
-    /*
-        Create an Icon.
-    */
+	/*
+	   Create an Icon.
+	*/
 
-    type Icon struct {
-        headers map[string]string
-        body []byte
-    }
+	type Icon struct {
+		headers map[string]string
+		body    []byte
+	}
 
-    /*
-        Create a new map.
-    */
+	/*
+	   Create a new map.
+	*/
 
-    icon := Icon{
-        headers: make(map[string]string),
-    }
+	icon := Icon{
+		headers: make(map[string]string),
+	}
 
-    /*
-        Set the default maxAge.
-    */
+	/*
+	   Set the default maxAge.
+	*/
 
-    maxAge := 86400000
+	maxAge := 86400000
 
-    /*
-        If we were given a max age use it.
-    */
+	/*
+	   If we were given a max age use it.
+	*/
 
-    if opt.MaxAge > 0 {
-        maxAge = opt.MaxAge
-    }
+	if opt.MaxAge > 0 {
+		maxAge = opt.MaxAge
+	}
 
-    /*
-        Set the default path.
-    */
+	/*
+	   Set the default path.
+	*/
 
-    path := "./favicon.ico"
+	path := "./favicon.ico"
 
-    /*
-        If we were given a path use it.
-    */
+	/*
+	   If we were given a path use it.
+	*/
 
-    if len(opt.Path) > 0 {
-        path = opt.Path
-    }
+	if len(opt.Path) > 0 {
+		path = opt.Path
+	}
 
-    /*
-        The Handler function returned to Use().
-    */
+	/*
+	   The Handler function returned to Use().
+	*/
 
-    return func(req *Request, res *Response, next func()) {
+	return func(req *Request, res *Response, next func()) {
 
-        /*
-            If this is not a fav icon return fast
-        */
+		/*
+		   If this is not a fav icon return fast
+		*/
 
-        if req.OriginalUrl != "/favicon.ico" {
-            return
-        }
+		if req.OriginalUrl != "/favicon.ico" {
+			return
+		}
 
-        /*
-            If we have the icon cached, serve it.
-        */
+		/*
+		   If we have the icon cached, serve it.
+		*/
 
-        if len(icon.body) > 0 {
-            res.SetHeaders(icon.headers)
-            res.WriteBytes(icon.body)
-            res.End("");
-            return
-        }
+		if len(icon.body) > 0 {
+			res.SetHeaders(icon.headers)
+			res.WriteBytes(icon.body)
+			res.End("")
+			return
+		}
 
-        /*
-            Otherwise read the icon into cache.
-        */
+		/*
+		   Otherwise read the icon into cache.
+		*/
 
-        buf, err := ioutil.ReadFile(path)
-        if err != nil {
-            fmt.Println(err)
-            return
-        }
+		buf, err := ioutil.ReadFile(path)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-        /*
-            Generate an MD5 of the icon to be used in the etag.
-        */
+		/*
+		   Generate an MD5 of the icon to be used in the etag.
+		*/
 
-        hasher := md5.New()
-        io.WriteString(hasher, fmt.Sprint(buf))
+		hasher := md5.New()
+		io.WriteString(hasher, fmt.Sprint(buf))
 
-        /*
-            Create headers for the icon.
-        */
+		/*
+		   Create headers for the icon.
+		*/
 
-        icon.headers["content-type"] = "image/x-icon"
-        icon.headers["content-length"] = fmt.Sprint(len(buf))
-        icon.headers["etag"] = fmt.Sprint(hasher.Sum(nil))
-        icon.headers["cache-control"] = "public, max-age=" + fmt.Sprint(maxAge / 1000)
-        icon.body = buf
+		icon.headers["content-type"] = "image/x-icon"
+		icon.headers["content-length"] = fmt.Sprint(len(buf))
+		icon.headers["etag"] = fmt.Sprint(hasher.Sum(nil))
+		icon.headers["cache-control"] = "public, max-age=" + fmt.Sprint(maxAge/1000)
+		icon.body = buf
 
-        /*
-            Serve the icon.
-        */
+		/*
+		   Serve the icon.
+		*/
 
-        res.SetHeaders(icon.headers)
-        res.WriteBytes(icon.body)
-        res.End("");
-    }
+		res.SetHeaders(icon.headers)
+		res.WriteBytes(icon.body)
+		res.End("")
+	}
 }

@@ -1,22 +1,22 @@
 package stackr
 
-import(
-    "testing"
-    "net/http"
-    . "github.com/ricallinson/simplebdd"
+import (
+	. "github.com/ricallinson/simplebdd"
+	"net/http"
+	"testing"
 )
 
 func TestRequest(t *testing.T) {
 
-    var req *Request
+	var req *Request
 
-    BeforeEach(func() {
-        req = &Request{
-            Request: &http.Request{
-                Header: http.Header{},
-            },
-        }
-    })
+	BeforeEach(func() {
+		req = &Request{
+			Request: &http.Request{
+				Header: http.Header{},
+			},
+		}
+	})
 
-    Report(t)
+	Report(t)
 }
