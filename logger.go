@@ -10,11 +10,11 @@ import(
 /*
     Options for the logger middleware. _Note: future options commented out._
 */
-type OptLog struct {
-    Format string
-    Writer func(...interface {}) (int, error)
+type loggerOpt struct {
+    format string
+    writer func(...interface{}) (int, error)
     // Buffer int
-    Immediate bool
+    immediate bool
     startTime int64
 }
 
@@ -33,13 +33,13 @@ var loggerFormatOptions map[string]string = map[string]string{
     Logger format functions.
 */
 
-var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = map[string]func(*OptLog, *Request, *Response)string{
+var loggerFormatFunctions map[string]func(*loggerOpt, *Request, *Response)string = map[string]func(*loggerOpt, *Request, *Response)string{
 
     /*
         Response header content-length.
     */
 
-    ":res[content-length]": func(opt *OptLog, req *Request, res *Response) string {
+    ":res[content-length]": func(opt *loggerOpt, req *Request, res *Response) string {
         length := res.Writer.Header().Get("content-length")
         if len(length) == 0 {
             length = "0"
@@ -51,7 +51,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
         HTTP version.
     */
 
-    ":http-version": func(opt *OptLog, req *Request, res *Response) string {
+    ":http-version": func(opt *loggerOpt, req *Request, res *Response) string {
         return req.Proto
     },
 
@@ -59,7 +59,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
         Response time in milliseconds.
     */
 
-    ":response-time": func(opt *OptLog, req *Request, res *Response) string {
+    ":response-time": func(opt *loggerOpt, req *Request, res *Response) string {
         return fmt.Sprint((time.Now().UnixNano() - opt.startTime) / 1000000)
     },
 
@@ -67,7 +67,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
         Remote address.
     */
 
-    ":remote-addr": func(opt *OptLog, req *Request, res *Response) string {
+    ":remote-addr": func(opt *loggerOpt, req *Request, res *Response) string {
         return req.RemoteAddr
     },
 
@@ -75,7 +75,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
         UTC date.
     */
 
-    ":date": func(opt *OptLog, req *Request, res *Response) string {
+    ":date": func(opt *loggerOpt, req *Request, res *Response) string {
         return time.Now().Format(time.RFC1123Z)
     },
 
@@ -83,7 +83,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
         Request method.
     */
 
-    ":method": func(opt *OptLog, req *Request, res *Response) string {
+    ":method": func(opt *loggerOpt, req *Request, res *Response) string {
         return req.Method
     },
 
@@ -91,7 +91,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
         Request url.
     */
 
-    ":url": func(opt *OptLog, req *Request, res *Response) string {
+    ":url": func(opt *loggerOpt, req *Request, res *Response) string {
         return req.OriginalUrl
     },
 
@@ -99,7 +99,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
         Normalized referrer.
     */
 
-    ":referrer": func(opt *OptLog, req *Request, res *Response) string {
+    ":referrer": func(opt *loggerOpt, req *Request, res *Response) string {
         return req.Referer()
     },
 
@@ -107,7 +107,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
         UA string.
     */
 
-    ":user-agent": func(opt *OptLog, req *Request, res *Response) string {
+    ":user-agent": func(opt *loggerOpt, req *Request, res *Response) string {
         return req.UserAgent()
     },
 
@@ -115,7 +115,7 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
         Response status code.
     */
 
-    ":status": func(opt *OptLog, req *Request, res *Response) string {
+    ":status": func(opt *loggerOpt, req *Request, res *Response) string {
         return fmt.Sprint(res.StatusCode)
     },
 }
@@ -128,9 +128,12 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
     __Options:__
 
         * `format`  Format string, see below for tokens
-        * `writer`  Output writer, defaults to _fmt.Println_
         * `buffer`  (not implemented yet) Buffer duration, defaults to 1000ms when _true_
         * `immediate`  Write log line on request instead of response (for response times)
+    
+    __Second Argument:__
+
+        * `writer`  Output writer, defaults to _fmt.Println_
 
     Tokens:
 
@@ -157,54 +160,62 @@ var loggerFormatFunctions map[string]func(*OptLog, *Request, *Response)string = 
 
     Examples:
 
-        app.Use("/", stackr.Logger()) // default
-        app.Use("/", stackr.Logger(stackr.OptLog{Format: "short"}))
-        app.Use("/", stackr.Logger(stackr.OptLog{Format: "tiny"}))
-        app.Use("/", stackr.Logger(stackr.OptLog{Immediate: true, Format: "dev"})
-        app.Use("/", stackr.Logger(stackr.OptLog{Format: ":method :url - :referrer"})
-        app.Use("/", stackr.Logger(stackr.OptLog{Format: ":req[content-type] -> :res[content-type]"})
+        app.Use(stackr.Logger()) // default
+        app.Use(stackr.Logger(map[string]string{"format": "short"}))
+        app.Use(stackr.Logger(map[string]string{"format": "tiny"}))
+        app.Use(stackr.Logger(map[string]string{"format": "dev", "immediate": "true"})
+        app.Use(stackr.Logger(map[string]string{"format": ":method :url - :referrer"})
+        app.Use(stackr.Logger(map[string]string{"format": ":req[content-type] -> :res[content-type]"})
 */
-func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
+func Logger(o ...interface{}) (func(req *Request, res *Response, next func())) {
 
     /*
-        If we got an OptLog use it.
+        If we got options use them.
     */
 
-    var opt OptLog
+    opt := loggerOpt{}
 
-    if len(o) == 1 {
-        opt = o[0]
-    } else {
-        opt = OptLog{}
+    // The first argument is the map of options.
+    if len(o) > 0 {
+        val := o[0].(map[string]string)
+        opt.format = val["format"]
+        // opt.buffer = strconv.Atoi(val["buffer"])
+        opt.immediate = val["immediate"] == "true"
+    }
+
+    // The second argument is the writer function.
+    if len(o) == 2 {
+        val := o[1].(func(...interface{}) (int, error))
+        opt.writer = val
     }
 
     /*
         If we were not given a format use "default".
     */
 
-    if opt.Format == "" {
-        opt.Format = "default"
+    if opt.format == "" {
+        opt.format = "default"
     }
 
     /*
         Set the default stream.
     */
 
-    writer := fmt.Println
+    logWriter := fmt.Println
 
     /*
         If we were given a different stream use that.
     */
 
-    if opt.Writer != nil {
-        writer = opt.Writer
+    if opt.writer != nil {
+        logWriter = opt.writer
     }
 
     /*
         Output on request instead of response.
     */
 
-    immediate := opt.Immediate
+    immediate := opt.immediate
 
     /*
         Return the Handler function.
@@ -236,7 +247,7 @@ func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
             Format the log string requested and write it to the stream function.
         */
 
-        writer(loggerFormat(opt, req, res, opt.Format))
+        logWriter(loggerFormat(opt, req, res, opt.format))
     }
 }
 
@@ -244,7 +255,7 @@ func Logger(o ...OptLog) (func(req *Request, res *Response, next func())) {
     Format the log with the given format string.
 */
 
-func loggerFormat(opt OptLog, req *Request, res *Response, format string) (string) {
+func loggerFormat(opt loggerOpt, req *Request, res *Response, format string) (string) {
 
     /*
         If format is "dev" we are done.
@@ -287,7 +298,7 @@ func loggerFormat(opt OptLog, req *Request, res *Response, format string) (strin
     Format the log for "dev" mode.
 */
 
-func loggerFormatDev(opt OptLog, req *Request, res *Response) (string) {
+func loggerFormatDev(opt loggerOpt, req *Request, res *Response) (string) {
 
     /*
         Get the length of the data sent.

@@ -40,7 +40,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
+            app.Use("", Logger(map[string]string{"format": "dev"}, writer))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.End("")
             })
@@ -55,7 +55,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
+            app.Use("", Logger(map[string]string{"format": "dev"}, writer))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.StatusCode = 300
                 res.End("")
@@ -71,7 +71,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
+            app.Use("", Logger(map[string]string{"format": "dev"}, writer))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.StatusCode = 400
                 res.End("")
@@ -87,7 +87,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
+            app.Use("", Logger(map[string]string{"format": "dev"}, writer))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.StatusCode = 500
                 res.End("")
@@ -103,7 +103,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer, Format: "dev"}))
+            app.Use("", Logger(map[string]string{"format": "dev"}, writer))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.StatusCode = 500
                 res.SetHeader("content-length", "100")
@@ -120,7 +120,7 @@ func TestLogger(t *testing.T) {
                 test = a[0].(string)
                 return 0, errors.New("")
             }
-            app.Use("", Logger(OptLog{Writer: writer, Format: ":method - :status - :res[content-length]"}))
+            app.Use("", Logger(map[string]string{"format": ":method - :status - :res[content-length]"}, writer))
             app.Use("", func(req *Request, res *Response, next func()) {
                 res.StatusCode = 500
                 res.SetHeader("content-length", "100")
@@ -133,12 +133,12 @@ func TestLogger(t *testing.T) {
 
     Describe("loggerFormatFunctions[match]()", func() {
 
-        var opt *OptLog
+        var opt *loggerOpt
         var req *Request
         var res *Response
 
         BeforeEach(func() {
-            opt = &OptLog{}
+            opt = &loggerOpt{}
             req = createRequest(NewMockHttpRequest())
             res = createResponse(NewMockResponseWriter(false))
         })

@@ -3,6 +3,7 @@ package stackr
 import(
     "io"
     "fmt"
+    "strconv"
     "io/ioutil"
     "crypto/md5"
 )
@@ -10,7 +11,7 @@ import(
 /*
     The options for the favicon middleware.
 */
-type OptFav struct {
+type faviconOpt struct {
     Path string
     MaxAge int
 }
@@ -28,31 +29,31 @@ type OptFav struct {
 
         Serve default favicon:
 
-        stackr.CreateServer().Use("/", stackr.Favicon())
-        stackr.CreateServer().Use("/", stackr.Favicon(statckr.OptFav{MaxAge: 1000}))
+        stackr.CreateServer().Use(stackr.Favicon())
+        stackr.CreateServer().Use(stackr.Favicon(map[string]string{"maxage": "1000"}))
 
     Serve favicon before logging for brevity:
 
         app := stackr.CreateServer()
-        app.Use("/", stackr.Favicon())
-        app.Use("/", stackr.Logger())
+        app.Use(stackr.Favicon())
+        app.Use(stackr.Logger())
 
     Serve custom favicon:
-    
-        stack.CreateServer().Use("/", stack.Favicon(stack.OptFav{path "./public/favicon.ico"}))
+
+        stackr.CreateServer().Use(stackr.Favicon(map[string]string{"path": "./public/favicon.ico"}))
  */
-func Favicon(o ...OptFav) (func(req *Request, res *Response, next func())) {
+func Favicon(o ...map[string]string) (func(req *Request, res *Response, next func())) {
 
     /*
-        If we got an OptFav use it.
+        If we got options use them.
     */
 
-    var opt OptFav
+    opt := faviconOpt{}
 
     if len(o) == 1 {
-        opt = o[0]
-    } else {
-        opt = OptFav{}
+        val := o[0]
+        opt.Path = val["path"]
+        opt.MaxAge, _ = strconv.Atoi(val["maxage"])
     }
 
     /*

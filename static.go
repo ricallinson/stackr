@@ -8,7 +8,7 @@ import(
 /*
     Options for the static middleware. _Note: future options commented out._
 */
-type OptStatic struct {
+type staticOpt struct {
     Root string
     // MaxAge int64
     // Hidden bool
@@ -23,28 +23,31 @@ type OptStatic struct {
 
     Examples:
     
-        stackr.CreateServer().Use("/", stackr.Static())
-        stackr.CreateServer().Use("/", stackr.Static(stackr.OptStatic{Root: "./public"}))
+        stackr.CreateServer().Use(stackr.Static())
+        stackr.CreateServer().Use(stackr.Static(map[string]string{"root": "./public"}))
 
     Options (not implemented yet):
 
-        * `maxAge`     Browser cache maxAge in milliseconds. defaults to 0
+        * `maxage`     Browser cache maxAge in milliseconds. defaults to 0
         * `hidden`     Allow transfer of hidden files. defaults to false
         * `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
         * `index`      Default file name, defaults to 'index.html'
 */
-func Static(o ...OptStatic) (func(req *Request, res *Response, next func())) {
+func Static(o ...map[string]string) (func(req *Request, res *Response, next func())) {
 
     /*
-        If we got an OptStatic use it.
+        If we got options use them.
     */
 
-    var opt OptStatic
+    opt := staticOpt{}
 
     if len(o) == 1 {
-        opt = o[0]
-    } else {
-        opt = OptStatic{}
+        val := o[0]
+        opt.Root = val["root"]
+        // opt.MaxAge, _ = strconv.Atoi(val["maxage"])
+        // opt.Hidden = val["hidden"] == "true"
+        // opt.Redirect = val["redirect"] == "true"
+        // opt.Index = val["index"] == "true"
     }
 
     /*
