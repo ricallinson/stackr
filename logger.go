@@ -127,9 +127,9 @@ var loggerFormatFunctions map[string]func(*loggerOpt, *Request, *Response)string
 
     __Options:__
 
-        * `format`  Format string, see below for tokens
-        * `buffer`  (not implemented yet) Buffer duration, defaults to 1000ms when _true_
-        * `immediate`  Write log line on request instead of response (for response times)
+        * `format` Format string, see below for tokens
+        * `buffer` (not implemented yet) Buffer duration, defaults to 1000ms when _true_
+        * `immediate` Write log line on request instead of response (for response times)
     
     __Second Argument:__
 
@@ -155,7 +155,7 @@ var loggerFormatFunctions map[string]func(*loggerOpt, *Request, *Response)string
 
         * `default` ':remote-addr - - [:date] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"'
         * `short` ':remote-addr - :method :url HTTP/:http-version :status :res[content-length] - :response-time ms'
-        * `tiny`  ':method :url :status :res[content-length] - :response-time ms'
+        * `tiny` ':method :url :status :res[content-length] - :response-time ms'
         * `dev` concise output colored by response status for development use
 
     Examples:
