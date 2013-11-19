@@ -21,6 +21,9 @@ type Response struct {
 
     // Ture if .End() has been called.
     Closed bool
+
+    // Events
+    events map[string][]func()
 }
 
 /*
@@ -33,13 +36,32 @@ func createResponse(writer http.ResponseWriter) (*Response) {
         Create a new Response.
     */
 
-    this := &Response{writer, false, 200, false}
+    this := &Response{writer, false, 200, false, map[string][]func(){}}
 
     /*
         Return the finished stack.Response.
     */
 
     return this
+}
+
+/*
+    Register a listener function for an event.
+*/
+func (this *Response) On(event string, fn func()) {
+    this.events[event] = append(this.events[event], fn)
+}
+
+/*
+    Fire an event calling all registered listeners.
+*/
+func (this *Response) Fire(event string) {
+    e, ok := this.events[event]
+    if ok {
+        for _, fn := range e {
+            fn()
+        }
+    }
 }
 
 /*
@@ -76,8 +98,6 @@ func (this *Response) SetHeader(key string, value string) (bool) {
 
     if len(value) > 0 {
         this.Writer.Header().Set(key, value)
-    } else {
-        this.Writer.Header().Del(key)
     }
 
     /*
@@ -99,6 +119,12 @@ func (this *Response) RemoveHeader(key string) {
 */
 
 func (this *Response) writeHeaders() {
+
+    /*
+        Fire an event.
+    */
+
+    this.Fire("header")
 
     /*
         Set the HeaderSent flag to true.
