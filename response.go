@@ -19,8 +19,11 @@ type Response struct {
 	// The HTTP status code to be return.
 	StatusCode int
 
-	// Ture if .End() has been called.
+	// True if .End() has been called.
 	Closed bool
+
+	// Error. Populated by anything that wants to trigger an error.
+	Error error
 
 	// Events
 	events map[string][]func()
@@ -36,7 +39,7 @@ func createResponse(writer http.ResponseWriter) *Response {
 	   Create a new Response.
 	*/
 
-	this := &Response{writer, false, 200, false, map[string][]func(){}}
+	this := &Response{writer, false, 200, false, nil, map[string][]func(){}}
 
 	/*
 	   Return the finished stack.Response.

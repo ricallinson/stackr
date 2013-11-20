@@ -18,6 +18,7 @@
 package stackr
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -129,6 +130,15 @@ func (this *Server) Use(in ...interface{}) *Server {
    Note: this is a recursive function.
 */
 func (this *Server) Handle(req *Request, res *Response, index int) {
+
+	// For each call to Handle we want to catch anything that panics.
+	defer func() {
+		err := recover()
+		if err == nil {
+			return
+		}
+		res.Error = errors.New(fmt.Sprint(err))
+	}()
 
 	/*
 	   If the response has been closed return.
