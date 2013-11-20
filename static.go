@@ -147,6 +147,12 @@ func Static(o ...map[string]string) func(*Request, *Response, func()) {
 		http.StripPrefix(req.MatchedUrl, fileServer).ServeHTTP(res.Writer, req.Request)
 
 		/*
+			As the above line sets headers we have to manually set the flag to true.
+		*/
+
+		res.HeaderSent = true
+
+		/*
 		   Now call End() to make sure we don't process any more middleware.
 		*/
 
