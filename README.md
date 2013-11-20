@@ -26,6 +26,7 @@ Stackr is an extensible HTTP server framework for Go, shipping with over 3 bundl
 * `Favicon` efficient favicon server
 * `Logger` request logger with custom format support
 * `ResponseTime` calculates response-time and exposes via X-Response-Time
+* `MethodOverride` faux HTTP method support
 * `Static` static file server currently based on http.FileServer
 
 ## Testing
