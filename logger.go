@@ -167,7 +167,7 @@ var loggerFormatFunctions map[string]func(*loggerOpt, *Request, *Response) strin
        app.Use(stackr.Logger(map[string]string{"format": ":method :url - :referrer"})
        app.Use(stackr.Logger(map[string]string{"format": ":req[content-type] -> :res[content-type]"})
 */
-func Logger(o ...interface{}) func(req *Request, res *Response, next func()) {
+func Logger(o ...interface{}) func(*Request, *Response, func()) {
 
 	/*
 	   If we got options use them.

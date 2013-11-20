@@ -152,7 +152,7 @@ func (this *Server) Handle(req *Request, res *Response, index int) {
 		layer = middleware{} // no
 	} else {
 		layer = this.stack[index] // yes
-		index++ // increment the index by 1
+		index++                   // increment the index by 1
 	}
 
 	/*
@@ -211,12 +211,12 @@ func (this *Server) Handle(req *Request, res *Response, index int) {
 
 	} else {
 
-        /*
-           Call this function again, passing the index value.
-        */
+		/*
+		   Call this function, passing the index value.
+		*/
 
-        this.Handle(req, res, index)
-    }
+		this.Handle(req, res, index)
+	}
 }
 
 /*

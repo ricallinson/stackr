@@ -7,6 +7,44 @@ import (
 
 func TestResponse(t *testing.T) {
 
+	Describe("Response.Emit()", func() {
+
+		It("should return [0]", func() {
+			res := createResponse(NewMockResponseWriter(false))
+			test := 0
+			res.On("foo", func() {
+				test++
+			})
+			AssertEqual(test, 0)
+		})
+
+		It("should return [1]", func() {
+			res := createResponse(NewMockResponseWriter(false))
+			test := 0
+			res.On("foo", func() {
+				test++
+			})
+			res.Emit("foo")
+			AssertEqual(test, 1)
+		})
+
+		It("should return [3]", func() {
+			res := createResponse(NewMockResponseWriter(false))
+			test := 0
+			res.On("foo", func() {
+				test++
+			})
+			res.On("foo", func() {
+				test++
+			})
+			res.On("foo", func() {
+				test++
+			})
+			res.Emit("foo")
+			AssertEqual(test, 3)
+		})
+	})
+
 	Describe("Response.Write()", func() {
 
 		It("should return [true] after writing foo", func() {

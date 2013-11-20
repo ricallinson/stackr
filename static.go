@@ -33,7 +33,7 @@ type staticOpt struct {
        * `redirect` Redirect to trailing "/" when the pathname is a dir. defaults to true
        * `index` Default file name, defaults to 'index.html'
 */
-func Static(o ...map[string]string) func(req *Request, res *Response, next func()) {
+func Static(o ...map[string]string) func(*Request, *Response, func()) {
 
 	/*
 	   If we got options use them.

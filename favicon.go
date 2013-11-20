@@ -42,7 +42,7 @@ type faviconOpt struct {
 
        stackr.CreateServer().Use(stackr.Favicon(map[string]string{"path": "./public/favicon.ico"}))
 */
-func Favicon(o ...map[string]string) func(req *Request, res *Response, next func()) {
+func Favicon(o ...map[string]string) func(*Request, *Response, func()) {
 
 	/*
 	   If we got options use them.

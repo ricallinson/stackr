@@ -15,12 +15,13 @@ import (
        stackr.CreateServer().Use(stackr.ResponseTime())
 
 */
-func ResponseTime() func(req *Request, res *Response, next func()) {
+func ResponseTime() func(*Request, *Response, func()) {
 	return func(req *Request, res *Response, next func()) {
 		start := time.Now().UnixNano()
 		res.On("header", func() {
 			duration := time.Now().UnixNano() - start
 			res.SetHeader("X-Response-Time", strconv.FormatInt(int64(time.Duration(duration)/time.Millisecond), 10)+"ms")
 		})
+		next()
 	}
 }

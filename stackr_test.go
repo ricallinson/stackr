@@ -218,6 +218,20 @@ func TestStack(t *testing.T) {
 			app.Handle(req, res, 0)
 			AssertEqual(test, false)
 		})
+
+		It("should return [123]", func() {
+			test := ""
+			app.Use(func(req *Request, res *Response, next func()) {
+				test += "1"
+				next()
+				test += "3"
+			})
+			app.Use("/", func(req *Request, res *Response, next func()) {
+				test += "2"
+			})
+			app.Handle(req, res, 0)
+			AssertEqual(test, "123")
+		})
 	})
 
 	Report(t)

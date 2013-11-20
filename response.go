@@ -53,9 +53,9 @@ func (this *Response) On(event string, fn func()) {
 }
 
 /*
-   Fire an event calling all registered listeners.
+   Emit an event calling all registered listeners.
 */
-func (this *Response) Fire(event string) {
+func (this *Response) Emit(event string) {
 	e, ok := this.events[event]
 	if ok {
 		for _, fn := range e {
@@ -124,7 +124,7 @@ func (this *Response) writeHeaders() {
 	   Fire an event.
 	*/
 
-	this.Fire("header")
+	this.Emit("header")
 
 	/*
 	   Set the HeaderSent flag to true.
@@ -187,6 +187,14 @@ func (this *Response) Write(data string) bool {
 	}
 
 	/*
+		If the string was empty just return.
+	*/
+
+	if len(data) == 0 {
+		return true
+	}
+
+	/*
 	   Try and write the string to the client.
 	*/
 
@@ -218,9 +226,7 @@ func (this *Response) End(data string) bool {
 	   Write the data to the client.
 	*/
 
-	if len(data) > 0 {
-		status = this.Write(data)
-	}
+	status = this.Write(data)
 
 	/*
 	   Set the "Closed" flag to true.
