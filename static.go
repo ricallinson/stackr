@@ -107,6 +107,7 @@ func Static(o ...map[string]string) func(req *Request, res *Response, next func(
 		*/
 
 		if statCache[filepath] == -1 {
+			next()
 			return
 		}
 
@@ -128,6 +129,7 @@ func Static(o ...map[string]string) func(req *Request, res *Response, next func(
 
 				statCache[filepath] = -1
 
+				next()
 				return
 			}
 

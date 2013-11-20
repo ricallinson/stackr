@@ -130,6 +130,7 @@ func TestStack(t *testing.T) {
 			req.OriginalUrl = "/foo/bar"
 			app.Use("/foo", func(req *Request, res *Response, next func()) {
 				test++
+				next()
 			})
 			app.Use("/foo", func(req *Request, res *Response, next func()) {
 				test++
@@ -209,6 +210,7 @@ func TestStack(t *testing.T) {
 			test := true
 			app.Use("/", func(req *Request, res *Response, next func()) {
 				res.Write("foo")
+				next()
 			})
 			app.Use("/", func(req *Request, res *Response, next func()) {
 				test = res.SetHeader("key", "val")

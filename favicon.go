@@ -112,6 +112,7 @@ func Favicon(o ...map[string]string) func(req *Request, res *Response, next func
 		*/
 
 		if req.OriginalUrl != "/favicon.ico" {
+			next()
 			return
 		}
 
@@ -123,6 +124,7 @@ func Favicon(o ...map[string]string) func(req *Request, res *Response, next func
 			res.SetHeaders(icon.headers)
 			res.WriteBytes(icon.body)
 			res.End("")
+			next()
 			return
 		}
 
@@ -133,6 +135,7 @@ func Favicon(o ...map[string]string) func(req *Request, res *Response, next func
 		buf, err := ioutil.ReadFile(path)
 		if err != nil {
 			fmt.Println(err)
+			next()
 			return
 		}
 
