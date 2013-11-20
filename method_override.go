@@ -1,7 +1,7 @@
 package stackr
 
 import (
-	"github.com/ricallinson/httphelp"
+	"github.com/ricallinson/httputils"
 	"strings"
 )
 
