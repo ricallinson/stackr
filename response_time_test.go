@@ -3,7 +3,6 @@ package stackr
 import (
 	. "github.com/ricallinson/simplebdd"
 	"testing"
-	// "time"
 )
 
 func TestResponseTime(t *testing.T) {
