@@ -12,6 +12,7 @@ import (
 
 func NewMockHttpRequest() *http.Request {
 	req := &http.Request{
+		Header:     http.Header{},
 		RequestURI: "/",
 		URL:        new(url.URL),
 	}
@@ -25,6 +26,7 @@ func NewMockHttpRequest() *http.Request {
 type MockResponseWriter struct {
 	error   bool
 	headers http.Header
+	Written []byte
 }
 
 func (this *MockResponseWriter) Header() http.Header {
@@ -35,6 +37,7 @@ func (this *MockResponseWriter) Write(data []byte) (int, error) {
 	if this.error {
 		return 0, errors.New("")
 	}
+	this.Written = data
 	return len(data), nil
 }
 
@@ -43,5 +46,5 @@ func (this *MockResponseWriter) WriteHeader(code int) {
 }
 
 func NewMockResponseWriter(error bool) *MockResponseWriter {
-	return &MockResponseWriter{error, make(http.Header)}
+	return &MockResponseWriter{error, make(http.Header), []byte{}}
 }
