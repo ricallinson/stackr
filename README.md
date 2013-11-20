@@ -4,7 +4,7 @@
 
 __WARNING: UNSTABLE API__
 
-Stackr is an extensible HTTP server framework for Go, shipping with over 3 bundled middleware and a poor selection of 3rd-party middleware.
+Stackr is an extensible HTTP server framework for Go, shipping with over 5 bundled middleware and a poor selection of 3rd-party middleware.
 
     package main
 
