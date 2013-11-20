@@ -13,7 +13,8 @@ import (
 
    Example:
 
-       stackr.CreateServer().Use(stackr.ResponseTime())
+       stackr.CreateServer().Use(stackr.ErrorHandler())
+       stackr.CreateServer().Use(stackr.ErrorHandler("Error Title"))
 
 */
 func ErrorHandler(t ...string) func(*Request, *Response, func()) {
