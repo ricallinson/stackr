@@ -21,7 +21,7 @@ type faviconOpt struct {
 
 	Options:
 
-	* `MaxAge` cache-control max-age directive, defaulting to 1 day
+		* `MaxAge` cache-control max-age directive, defaulting to 1 day
 
 	Examples:
 
