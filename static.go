@@ -21,11 +21,15 @@ type staticOpt struct {
 
 	Options:
 
-		* `root` The root folder to serve static files from. Defaults to "./public".
-		* (not implemented yet) `maxage` Browser cache maxAge in milliseconds. Defaults to 0.
-		* (not implemented yet) `hidden` Allow transfer of hidden files. Defaults to false.
-		* (not implemented yet) `redirect` Redirect to trailing "/" when the pathname is a dir. Defaults to true.
-		* (not implemented yet) `index` Default file name. Defaults to 'index.html'.
+	* `root` The root folder to serve static files from. Defaults to "./public".
+	
+	* (not implemented yet) `maxage` Browser cache maxAge in milliseconds. Defaults to 0.
+	
+	* (not implemented yet) `hidden` Allow transfer of hidden files. Defaults to false.
+	
+	* (not implemented yet) `redirect` Redirect to trailing "/" when the pathname is a dir. Defaults to true.
+	
+	* (not implemented yet) `index` Default file name. Defaults to 'index.html'.
 
 	Examples:
 
