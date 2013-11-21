@@ -17,21 +17,21 @@ type staticOpt struct {
 }
 
 /*
-   Static:
+	Static file server with the given `root` path.
 
-   Static file server with the given `root` path.
+	Options:
 
-   Examples:
+		* `root` The root folder to serve static files from. Defaults to "./public".
+		* (not implemented yet) `maxage` Browser cache maxAge in milliseconds. Defaults to 0.
+		* (not implemented yet) `hidden` Allow transfer of hidden files. Defaults to false.
+		* (not implemented yet) `redirect` Redirect to trailing "/" when the pathname is a dir. Defaults to true.
+		* (not implemented yet) `index` Default file name. Defaults to 'index.html'.
 
-       stackr.CreateServer().Use(stackr.Static())
-       stackr.CreateServer().Use(stackr.Static(map[string]string{"root": "./public"}))
+	Examples:
 
-   Options (not implemented yet):
+		stackr.CreateServer().Use(stackr.Static())
+		stackr.CreateServer().Use(stackr.Static(map[string]string{"root": "./public"}))
 
-       * `maxage` Browser cache maxAge in milliseconds. defaults to 0
-       * `hidden` Allow transfer of hidden files. defaults to false
-       * `redirect` Redirect to trailing "/" when the pathname is a dir. defaults to true
-       * `index` Default file name, defaults to 'index.html'
 */
 func Static(o ...map[string]string) func(*Request, *Response, func()) {
 

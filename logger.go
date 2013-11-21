@@ -121,51 +121,49 @@ var loggerFormatFunctions map[string]func(*loggerOpt, *Request, *Response) strin
 }
 
 /*
-   Logger:
+	Log requests with the given `options` or a `format` string.
 
-   Log requests with the given `options` or a `format` string.
+	Options:
 
-   __Options:__
+		* `format` Format string, see below for tokens
+		* `buffer` (not implemented yet) Buffer duration, defaults to 1000ms when _true_
+		* `immediate` Write log line on request instead of response (for response times)
 
-       * `format` Format string, see below for tokens
-       * `buffer` (not implemented yet) Buffer duration, defaults to 1000ms when _true_
-       * `immediate` Write log line on request instead of response (for response times)
+	Optional Second Argument:
 
-   __Second Argument:__
+		* `writer`  Output writer, defaults to _fmt.Println_
 
-       * `writer`  Output writer, defaults to _fmt.Println_
+	Tokens:
 
-   Tokens:
+		* (not implemented) `:req[header]` ex: `:req[Accept]`
+		* `:res[Content-Length]`
+		* `:http-version`
+		* `:response-time`
+		* `:remote-addr`
+		* `:date`
+		* `:method`
+		* `:url`
+		* `:referrer`
+		* `:user-agent`
+		* `:status`
 
-       * (not implemented) `:req[header]` ex: `:req[Accept]`
-       * `:res[Content-Length]`
-       * `:http-version`
-       * `:response-time`
-       * `:remote-addr`
-       * `:date`
-       * `:method`
-       * `:url`
-       * `:referrer`
-       * `:user-agent`
-       * `:status`
+	Formats:
 
-   Formats:
+	Pre-defined formats that ship with connect:
 
-   Pre-defined formats that ship with connect:
+		* `default` ':remote-addr - - [:date] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"'
+		* `short` ':remote-addr - :method :url HTTP/:http-version :status :res[content-length] - :response-time ms'
+		* `tiny` ':method :url :status :res[content-length] - :response-time ms'
+		* `dev` concise output colored by response status for development use
 
-       * `default` ':remote-addr - - [:date] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"'
-       * `short` ':remote-addr - :method :url HTTP/:http-version :status :res[content-length] - :response-time ms'
-       * `tiny` ':method :url :status :res[content-length] - :response-time ms'
-       * `dev` concise output colored by response status for development use
+	Examples:
 
-   Examples:
-
-       app.Use(stackr.Logger()) // default
-       app.Use(stackr.Logger(map[string]string{"format": "short"}))
-       app.Use(stackr.Logger(map[string]string{"format": "tiny"}))
-       app.Use(stackr.Logger(map[string]string{"format": "dev", "immediate": "true"})
-       app.Use(stackr.Logger(map[string]string{"format": ":method :url - :referrer"})
-       app.Use(stackr.Logger(map[string]string{"format": ":req[content-type] -> :res[content-type]"})
+		app.Use(stackr.Logger()) // default
+		app.Use(stackr.Logger(map[string]string{"format": "short"}))
+		app.Use(stackr.Logger(map[string]string{"format": "tiny"}))
+		app.Use(stackr.Logger(map[string]string{"format": "dev", "immediate": "true"})
+		app.Use(stackr.Logger(map[string]string{"format": ":method :url - :referrer"})
+		app.Use(stackr.Logger(map[string]string{"format": ":req[content-type] -> :res[content-type]"})
 */
 func Logger(o ...interface{}) func(*Request, *Response, func()) {
 

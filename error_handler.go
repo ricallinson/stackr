@@ -7,8 +7,6 @@ import (
 )
 
 /*
-   ErrorHandler:
-
    Development error handler, providing stack traces and error message responses for requests accepting text, html, or json.
 
    Example:

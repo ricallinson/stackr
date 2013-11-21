@@ -6,8 +6,6 @@ import (
 )
 
 /*
-   ResponseTime:
-
    Adds the X-Response-Time header displaying the response duration in milliseconds.
 
    Example:

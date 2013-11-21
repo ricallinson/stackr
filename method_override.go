@@ -16,16 +16,14 @@ func supportsMethod(method string) bool {
 }
 
 /*
-   MethodOverride:
+	Provides faux HTTP method support.
 
-   Provides faux HTTP method support.
+	Pass an optional key to use when checking for a method override, otherwise defaults to _method.
+	The original method is available via req.Map["OriginalMethod"].
 
-    Pass an optional key to use when checking for a method override, otherwise defaults to _method.
-    The original method is available via req.Map["OriginalMethod"].
+	Example:
 
-   Example:
-
-       stackr.CreateServer().Use(stackr.MethodOverride())
+		stackr.CreateServer().Use(stackr.MethodOverride())
 
 */
 func MethodOverride() func(*Request, *Response, func()) {

@@ -17,30 +17,28 @@ type faviconOpt struct {
 }
 
 /*
-   Favicon:
+	By default serves the stackr favicon, or the favicon located by the given `path`.
 
-   By default serves the stackr favicon, or the favicon located by the given `path`.
+	Options:
 
-   Options:
+		* `MaxAge` cache-control max-age directive, defaulting to 1 day
 
-       * `MaxAge` cache-control max-age directive, defaulting to 1 day
+	Examples:
 
-   Examples:
+	Serve default favicon:
 
-       Serve default favicon:
+		stackr.CreateServer().Use(stackr.Favicon())
+		stackr.CreateServer().Use(stackr.Favicon(map[string]string{"maxage": "1000"}))
 
-       stackr.CreateServer().Use(stackr.Favicon())
-       stackr.CreateServer().Use(stackr.Favicon(map[string]string{"maxage": "1000"}))
+	Serve favicon before logging for brevity:
 
-   Serve favicon before logging for brevity:
+		app := stackr.CreateServer()
+		app.Use(stackr.Favicon())
+		app.Use(stackr.Logger())
 
-       app := stackr.CreateServer()
-       app.Use(stackr.Favicon())
-       app.Use(stackr.Logger())
+	Serve custom favicon:
 
-   Serve custom favicon:
-
-       stackr.CreateServer().Use(stackr.Favicon(map[string]string{"path": "./public/favicon.ico"}))
+		stackr.CreateServer().Use(stackr.Favicon(map[string]string{"path": "./public/favicon.ico"}))
 */
 func Favicon(o ...map[string]string) func(*Request, *Response, func()) {
 
