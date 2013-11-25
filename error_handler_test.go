@@ -34,6 +34,7 @@ func TestErrorHandler(t *testing.T) {
 		})
 
 		It("should return [panic]", func() {
+			app.Env = "prod"
 			app.Use(ErrorHandler())
 			app.Use(func(req *Request, res *Response, next func()) {
 				panic("panic")
@@ -44,6 +45,7 @@ func TestErrorHandler(t *testing.T) {
 		})
 
 		It("should return [34]", func() {
+			app.Env = "prod"
 			app.Use(ErrorHandler())
 			app.Use(func(req *Request, res *Response, next func()) {
 				panic("panic")
@@ -55,6 +57,7 @@ func TestErrorHandler(t *testing.T) {
 		})
 
 		It("should return [67]", func() {
+			app.Env = "prod"
 			app.Use(ErrorHandler("Title"))
 			app.Use(func(req *Request, res *Response, next func()) {
 				panic("panic")
@@ -66,6 +69,7 @@ func TestErrorHandler(t *testing.T) {
 		})
 
 		It("should return [{\"code\":\"500\",\"error\":\"panic\"}]", func() {
+			app.Env = "prod"
 			app.Use(ErrorHandler())
 			app.Use(func(req *Request, res *Response, next func()) {
 				panic("panic")

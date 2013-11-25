@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -29,6 +30,7 @@ import (
    A Stackr Server.
 */
 type Server struct {
+	Env   string
 	stack []middleware
 }
 
@@ -45,7 +47,16 @@ type middleware struct {
    Create a new stackr server.
 */
 func CreateServer() *Server {
-	return new(Server)
+
+	this := &Server{}
+
+	this.Env = os.Getenv("GO_ENV")
+
+	if this.Env == "" {
+		this.Env = "development"
+	}
+
+	return this
 }
 
 /*
@@ -131,14 +142,18 @@ func (this *Server) Use(in ...interface{}) *Server {
 */
 func (this *Server) Handle(req *Request, res *Response, index int) {
 
-	// For each call to Handle we want to catch anything that panics.
-	defer func() {
-		err := recover()
-		if err == nil {
-			return
-		}
-		res.Error = errors.New(fmt.Sprint(err))
-	}()
+	/*
+		For each call to Handle we want to catch anything that panics.
+	*/
+	if this.Env != "development" {
+		defer func() {
+			err := recover()
+			if err == nil {
+				return
+			}
+			res.Error = errors.New(fmt.Sprint(err))
+		}()
+	}
 
 	/*
 	   If the response has been closed return.
