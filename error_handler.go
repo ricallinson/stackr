@@ -26,8 +26,9 @@ func ErrorHandler(t ...string) func(*Request, *Response, func()) {
 	return func(req *Request, res *Response, next func()) {
 		// Call next as we're going to wait for an error.
 		next()
-		// If there is no error then return.
+		// If there is no error then call next.
 		if res.Error == nil {
+			next()
 			return
 		}
 		// Otherwise...

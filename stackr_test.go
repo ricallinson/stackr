@@ -47,14 +47,27 @@ func TestStack(t *testing.T) {
 
 	Describe("Handle()", func() {
 
+		var mock *MockResponseWriter
 		var app *Server
 		var req *Request
 		var res *Response
 
 		BeforeEach(func() {
+			mock = NewMockResponseWriter(false)
 			app = CreateServer()
 			req = createRequest(NewMockHttpRequest())
-			res = createResponse(NewMockResponseWriter(false))
+			res = createResponse(mock)
+		})
+
+		It("should return not found", func() {
+			app.Handle(req, res, 0)
+			AssertEqual(string(mock.Written), "Cannot  /")
+		})
+
+		It("should return not found", func() {
+			req.Method = "GET"
+			app.Handle(req, res, 0)
+			AssertEqual(string(mock.Written), "Cannot GET /")
 		})
 
 		It("should return [true] after default function is called", func() {

@@ -1,19 +1,19 @@
 /*
    Stackr is an extensible HTTP server framework for Go.
 
-       package main
+	   package main
 
-       import "github.com/ricallinson/stackr"
+	   import "github.com/ricallinson/stackr"
 
-       func main() {
-           app := stackr.CreateServer()
-           app.Use(stackr.Logger())
-           app.Use(stackr.Static())
-           app.Use("/", func(req *stackr.Request, res *stackr.Response, next func()) {
-               res.End("hello world\n")
-           })
-           app.Listen(3000)
-       }
+	   func main() {
+		   app := stackr.CreateServer()
+		   app.Use(stackr.Logger())
+		   app.Use(stackr.Static())
+		   app.Use("/", func(req *stackr.Request, res *stackr.Response, next func()) {
+			   res.End("hello world\n")
+		   })
+		   app.Listen(3000)
+	   }
 */
 package stackr
 
@@ -72,19 +72,19 @@ func CreateServer() *Server {
 
    Examples:
 
-       var app = stackr.CreateServer();
-       app.Use(stackr.Favicon())
-       app.Use(stackr.Logger())
-       app.Use("/public", stackr.Static())
+	   var app = stackr.CreateServer();
+	   app.Use(stackr.Favicon())
+	   app.Use(stackr.Logger())
+	   app.Use("/public", stackr.Static())
 
    If we wanted to prefix static files with _/public_, we could
    "mount" the `Static()` middleware:
 
-       app.Use("/public", stackr.Static(stackr.OptStatic{Root: "./static_files"}))
+	   app.Use("/public", stackr.Static(stackr.OptStatic{Root: "./static_files"}))
 
    This api is chainable, so the following is valid:
 
-       stackr.CreateServer().Use(stackr.Favicon()).Listen(3000);
+	   stackr.CreateServer().Use(stackr.Favicon()).Listen(3000);
 */
 func (this *Server) Use(in ...interface{}) *Server {
 
@@ -143,17 +143,17 @@ func (this *Server) Use(in ...interface{}) *Server {
 func (this *Server) Handle(req *Request, res *Response, index int) {
 
 	/*
-		For each call to Handle we want to catch anything that panics.
+		For each call to Handle we want to catch anything that panics in unless in development.
 	*/
-	if this.Env != "development" {
-		defer func() {
+
+	defer func() {
+		if this.Env != "development" {
 			err := recover()
-			if err == nil {
-				return
+			if err != nil {
+				res.Error = errors.New(fmt.Sprint(err))
 			}
-			res.Error = errors.New(fmt.Sprint(err))
-		}()
-	}
+		}
+	}()
 
 	/*
 	   If the response has been closed return.
