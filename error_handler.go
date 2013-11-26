@@ -7,7 +7,7 @@ import (
 )
 
 /*
-   Development error handler, providing stack traces and error message responses for requests accepting text, html, or json.
+   Error handler, providing res.Error message responses for requests accepting text, html, or json.
 
    Example:
 

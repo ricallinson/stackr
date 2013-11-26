@@ -143,7 +143,7 @@ func (this *Server) Use(in ...interface{}) *Server {
 func (this *Server) Handle(req *Request, res *Response, index int) {
 
 	/*
-		For each call to Handle we want to catch anything that panics in unless in development.
+		For each call to Handle we want to catch anything that panics unless in development mode.
 	*/
 
 	defer func() {
